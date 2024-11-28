@@ -1,6 +1,6 @@
 # Streamfu
 
-Functional streams, easy to use.
+Functional programming utilities for working with streams in JS/TS"
 
 ## Usage
 
