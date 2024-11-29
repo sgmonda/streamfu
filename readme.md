@@ -1,6 +1,12 @@
 # Streamfu
 
-Functional programming utilities for working with streams in JS/TS"
+Functional programming utilities for working with streams in JS/TS
+
+## Introduction
+
+Streams are async collections of data, conceptually similar to arrays, but very different in practice. Streams are a powerful tool for working with async data, but they can be hard to work with. This package provides a set of utilities to work with streams in a functional way, making it easier to work with them.
+
+If you know how to do something with arrays, you can do it with streams too!
 
 ## Usage
 
