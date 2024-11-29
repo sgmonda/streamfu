@@ -1,3 +1,5 @@
+![header](https://github.com/user-attachments/assets/97963ef5-68a6-449e-ad16-081a9bdc9103)
+
 # Streamfu
 
 Functional programming utilities for working with streams in JS/TS
