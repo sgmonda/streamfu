@@ -3,5 +3,20 @@
   "description": "Functional programming utilities for working with streams in JS/TS",
   "version": "0.1.3",
   "license": "MIT",
-  "exports": "./mod.ts"
+  "exports": "./mod.ts",
+  "imports": {
+    "streams": "jsr:@std/streams",
+    "asserts": "jsr:@std/assert"
+  },
+  "tasks": {
+    "test": "deno test --unstable --allow-read --allow-write --allow-net **/*.spec.ts"
+  },
+  "fmt": {
+    "type": "deno",
+    "options": {
+      "singleQuote": true,
+      "trailingComma": "all",
+      "tabWidth": 2
+    }
+  }
 }
