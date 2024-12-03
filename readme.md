@@ -2,7 +2,7 @@
 
 # Streamfu
 
-Functional programming utilities for working with streams in JS/TS
+Functional programming utilities for working with streams in JS/TS in a really intuitive and easy way.
 
 ## Introduction
 
