@@ -1,5 +1,5 @@
 import { assertEquals } from "asserts";
-import { createTransform } from "./createTransform.ts";
+import { map } from "./map.ts";
 import { createReadable } from "./createReadable.ts";
 import { reduce } from "./reduce.ts";
 
@@ -33,14 +33,14 @@ const TEST_CASES = [{
   expected: [3, 3, 5]
 }]
 
-Deno.test("createTansform()", async ({ step }) => {
+Deno.test("map()", async ({ step }) => {
   for (const testCase of TEST_CASES) await runTest(testCase);
 
   async function runTest({ title, conditions, expected }: typeof TEST_CASES[number]) {
     const { iterable, transform } = conditions;
     await step(title, async () => {
       const readable = createReadable(iterable);
-      const transformer = createTransform<any, any>(transform);
+      const transformer = map<any, any>(transform);
       const stream = readable.pipeThrough(transformer);
       const observed = await reduce<any, any>(stream, (acc, chunk) => ([...acc, chunk]), [])
       assertEquals(observed, expected);
