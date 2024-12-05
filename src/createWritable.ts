@@ -1,4 +1,3 @@
-
 /**
  * Creates a writable stream from a given write function. Every chunk written to the stream will be passed to the function.
  * 
