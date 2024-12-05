@@ -1,12 +1,15 @@
-export type IReducer<Tin, Taccum> = (acc: Taccum, chunk: Tin, index: number) => Taccum | Promise<Taccum>;
+type IReducer<Tin, Taccum> = (acc: Taccum, chunk: Tin, index: number) => Taccum | Promise<Taccum>;
 
 /**
- * Reduces a string into a single value, using the given function. This is similar to the Array.prototype.reduce method.
+ * Reduces a stream into a single value, using the given function. This is similar to the `Array.prototype.reduce` method.
  * 
  * @param readable Stream to reduce
  * @param fn Function to apply to each chunk, returning the new accumulator value
  * @param initialValue Initial value of the accumulator
  * @returns The final accumulator value
+ * 
+ * @example const sum = await reduce(numReadable, (acc, chunk) => acc + chunk, 0);
+ * @example const concat = await reduce(strReadable, (acc, chunk) => acc + chunk, '');
  */
 export const reduce = <Tin = unknown, Taccum = unknown>(
   readable: ReadableStream<Tin>,

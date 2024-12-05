@@ -24,7 +24,7 @@ Deno.test("createWritable()", async ({ step }) => {
   async function runTest({ title, conditions, expected }: typeof TEST_CASES[number]) {
     const { iterable, buffer } = conditions;
     await step(title, async () => {
-      const writable = createWritable<number>((chunk) => buffer.push(chunk));
+      const writable = createWritable<number>((chunk) => { buffer.push(chunk) });
       const readable = createReadable(iterable);
       await readable.pipeTo(writable);
       assertEquals(buffer, expected);

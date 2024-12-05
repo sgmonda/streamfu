@@ -7,6 +7,10 @@ const TEST_CASES = [{
   iterable: [1, 'two', 3, 'four'],
   expected: [1, 'two', 3, 'four'],
 }, {
+  title: 'from a string',
+  iterable: 'onetwothree',
+  expected: ['o', 'n', 'e', 't', 'w', 'o', 't', 'h', 'r', 'e', 'e'],
+}, {
   title: 'from a map',
   iterable: new Map([['one', 1], ['two', 2], ['three', 3]]),
   expected: [['one', 1], ['two', 2], ['three', 3]],
