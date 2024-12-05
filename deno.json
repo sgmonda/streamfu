@@ -9,14 +9,17 @@
     "asserts": "jsr:@std/assert"
   },
   "tasks": {
-    "test": "deno test --unstable --allow-read --allow-write --allow-net **/*.spec.ts"
+    "check": "deno check **/*.ts",
+    "test": "deno task check && deno test --allow-all --coverage && deno coverage",
+    "lint": "deno fmt && deno lint"
   },
   "fmt": {
-    "type": "deno",
-    "options": {
-      "singleQuote": true,
-      "trailingComma": "all",
-      "tabWidth": 2
-    }
-  }
+    "useTabs": false,
+    "lineWidth": 120,
+    "indentWidth": 2,
+    "semiColons": false,
+    "singleQuote": false,
+    "proseWrap": "preserve"
+  },
+  "lint": { "rules": { "tags": ["fresh", "recommended"] } }
 }

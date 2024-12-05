@@ -1,26 +1,28 @@
-import { platform, PLATFORM } from "./platform.ts";
+// deno-lint-ignore-file no-window no-window-prefix
 
-export let ReadableStream: typeof globalThis.ReadableStream;
-export let WritableStream: typeof globalThis.WritableStream;
-export let TransformStream: typeof globalThis.TransformStream;
+import { PLATFORM, platform } from "./platform.ts"
+
+export let ReadableStream: typeof globalThis.ReadableStream
+export let WritableStream: typeof globalThis.WritableStream
+export let TransformStream: typeof globalThis.TransformStream
 
 if (platform === PLATFORM.DENO) {
-  ReadableStream = globalThis.ReadableStream;
-  WritableStream = globalThis.WritableStream;
-  TransformStream = globalThis.TransformStream;
+  ReadableStream = globalThis.ReadableStream
+  WritableStream = globalThis.WritableStream
+  TransformStream = globalThis.TransformStream
 } else if (platform === PLATFORM.WEB) {
   //@ts-ignore Cross Runtime
-  ReadableStream = window.ReadableStream;
+  ReadableStream = window.ReadableStream
   //@ts-ignore Cross Runtime
-  WritableStream = window.WritableStream;
+  WritableStream = window.WritableStream
   //@ts-ignore Cross Runtime
-  TransformStream = window.TransformStream;
+  TransformStream = window.TransformStream
 } else if (platform === PLATFORM.BUN || platform === PLATFORM.NODE) {
-  const streamsModule = await import("node:stream/web");
+  const streamsModule = await import("node:stream/web")
   //@ts-ignore Cross Runtime
-  ReadableStream = streamsModule.ReadableStream;
+  ReadableStream = streamsModule.ReadableStream
   //@ts-ignore Cross Runtime
-  WritableStream = streamsModule.WritableStream;
+  WritableStream = streamsModule.WritableStream
   //@ts-ignore Cross Runtime
-  TransformStream = streamsModule.TransformStream;
-} 
+  TransformStream = streamsModule.TransformStream
+}

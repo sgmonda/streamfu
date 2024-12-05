@@ -23,7 +23,7 @@ This package provides a simple and functional way to work with streams in JS/TS.
 Then, just import the module from your code:
 
 ```typescript
-import * as streamfu from "@sgmonda/streamfu";
+import * as streamfu from "@sgmonda/streamfu"
 ```
 
 Enjoy it!
