@@ -6,7 +6,8 @@ type IReadable<T> = T extends Iterable<infer U> ? ReadableStream<U> : never
  * 
  * @param iterable Anything that is iterable, like an array, a generator, a string, etc.
  * @returns A readable stream
+ * @example const numsStream = streamize([1, 2, 3, 4, 5]);
  */
-export const streamize = <T extends Iterable<unknown>>(iterable: T): IReadable<T> => {
+export const createReadable = <T extends Iterable<unknown>>(iterable: T): IReadable<T> => {
     return ReadableStream.from(iterable) as IReadable<T>;
 }
