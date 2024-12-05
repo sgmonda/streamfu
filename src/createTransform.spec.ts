@@ -1,37 +1,49 @@
 import { assertEquals } from "asserts";
 import { createTransform } from "./createTransform.ts";
 import { createReadable } from "./createReadable.ts";
+import { reduce } from "./reduce.ts";
 
 const TEST_CASES = [{
-  title: 'Numbers list',
-  items: [1, 2, 3],
-  transform: (item: number) => item * 2,
+  title: 'double a list of numbers',
+  conditions: {
+    iterable: [1, 2, 3],
+    transform: (item: number) => item * 2,
+  },
   expected: [2, 4, 6]
+}, {
+  title: 'parse a list of strings to numbers',
+  conditions: {
+    iterable: ['1', '2', '3'],
+    transform: parseInt,
+  },
+  expected: [1, 2, 3]
+}, {
+  title: 'transform a list of strings to uppercase',
+  conditions: {
+    iterable: ['one', 'two', 'three'],
+    transform: (item: string) => item.toUpperCase(),
+  },
+  expected: ['ONE', 'TWO', 'THREE']
+}, {
+  title: 'transform a list of strings to their length',
+  conditions: {
+    iterable: ['one', 'two', 'three'],
+    transform: (item: string) => item.length,
+  },
+  expected: [3, 3, 5]
 }]
 
 Deno.test("createTansform()", async ({ step }) => {
-  TEST_CASES.forEach(async ({ items, transform, expected }) => {
-    const transformer = createTransform<number, number>(transform);
-    const example = createReadable(items);
-    const reader = example.pipeThrough(transformer).getReader();
-    const result: number[] = [];
-    reader.read().then(async function process({ done, value }): Promise<number | void> {
-      if (done) {
-        assertEquals(result, expected);
-        return;
-      }
-      result.push(value);
-      return reader.read().then(process);
-    })
-  })
+  for (const testCase of TEST_CASES) await runTest(testCase);
 
-  await step('case 1', async () => {
-    assertEquals(3, 3);
-  })
-  await step('case 2', async () => {
-    assertEquals(3, 3);
-  })
-  await step('case 3', async () => {
-    assertEquals(3, 3);
-  })
+  async function runTest({ title, conditions, expected }: typeof TEST_CASES[number]) {
+    const { iterable, transform } = conditions;
+    await step(title, async () => {
+      const readable = createReadable(iterable);
+      const transformer = createTransform<any, any>(transform);
+      const stream = readable.pipeThrough(transformer);
+      const observed = await reduce<any, any>(stream, (acc, chunk) => ([...acc, chunk]), [])
+      assertEquals(observed, expected);
+    })
+  }
 })

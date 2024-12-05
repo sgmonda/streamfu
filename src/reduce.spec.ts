@@ -36,7 +36,6 @@ const TEST_CASES = [{
   expected: 36.641
 }]
 
-
 Deno.test("reduce()", async ({ step }) => {
   for (const testCase of TEST_CASES) await runTest(testCase);
 
