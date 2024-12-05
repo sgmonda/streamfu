@@ -1,7 +1,5 @@
 import { platform, PLATFORM } from "./platform.ts";
 
-console.log('PLATFORM:', platform);
-
 export let ReadableStream: typeof globalThis.ReadableStream;
 export let WritableStream: typeof globalThis.WritableStream;
 export let TransformStream: typeof globalThis.TransformStream;

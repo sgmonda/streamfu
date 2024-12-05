@@ -1,4 +1,4 @@
-import { UnknownPlatformError } from "./errors.ts";
+import { UnknownPlatformError } from "../errors.ts";
 
 export enum PLATFORM { NODE = 'node', DENO = 'deno', BUN = 'bun', WEB = 'web' }
 

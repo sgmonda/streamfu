@@ -8,6 +8,6 @@ type IReadable<T> = T extends Iterable<infer U> ? ReadableStream<U> : never
  * @returns A readable stream
  * @example const numsStream = streamize([1, 2, 3, 4, 5]);
  */
-export const createReadable = <T extends Iterable<unknown>>(iterable: T): IReadable<T> => {
+export const createReadable = <T extends Iterable<unknown> | AsyncIterable<unknown>>(iterable: T): IReadable<T> => {
     return ReadableStream.from(iterable) as IReadable<T>;
 }
