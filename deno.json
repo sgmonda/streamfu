@@ -1,7 +1,7 @@
 {
   "name": "@sgmonda/streamfu",
   "description": "Functional programming utilities for working with streams in JS/TS",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "license": "MIT",
   "exports": "./mod.ts",
   "imports": {
@@ -9,9 +9,11 @@
     "asserts": "jsr:@std/assert"
   },
   "tasks": {
-    "check": "deno check **/*.ts",
-    "lint": "deno fmt && deno lint",
-    "test": "deno task check && deno task lint && deno test --allow-all --coverage && deno coverage --exclude=src/system"
+    "check": "deno check src/**/*.ts *.ts",
+    "lint": "deno fmt && deno lint src/**/*.ts *.ts",
+    "test": "deno task check && deno task lint && deno test --allow-all --coverage && deno coverage --exclude=src/system --exclude=examples && deno task test:examples",
+    "test:examples": "deno task test:node",
+    "test:node": "cd ./examples/node && npm test && npx -y yarn test && npx -y pnpm test"
   },
   "fmt": {
     "useTabs": false,

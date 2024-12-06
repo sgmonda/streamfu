@@ -2,6 +2,8 @@
 
 [![JSR Score](https://jsr.io/badges/@sgmonda/streamfu/score)](https://jsr.io/@sgmonda/streamfu) ![Tests](https://github.com/github/docs/actions/workflows/test.yml/badge.svg)
 
+---
+
 # Streamfu
 
 Functional programming utilities for working with streams in JS/TS.
@@ -51,3 +53,7 @@ To be completed
 ### `filter()`
 
 To be completed
+
+## TODO
+
+- [ ] Unify API for `map`, `reduce`, `filter`. Should they all receive a readable as first argument?

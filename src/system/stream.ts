@@ -17,8 +17,18 @@ if (platform === PLATFORM.DENO) {
   WritableStream = window.WritableStream
   //@ts-ignore Cross Runtime
   TransformStream = window.TransformStream
-} else if (platform === PLATFORM.BUN || platform === PLATFORM.NODE) {
-  const streamsModule = await import("node:stream/web")
+} else if (platform === PLATFORM.BUN) {
+  // //@ts-ignore Cross Runtime
+  // const streamsModule = await import("node:stream/web")
+  // //@ts-ignore Cross Runtime
+  // ReadableStream = streamsModule.ReadableStream
+  // //@ts-ignore Cross Runtime
+  // WritableStream = streamsModule.WritableStream
+  // //@ts-ignore Cross Runtime
+  // TransformStream = streamsModule.TransformStream
+} else if (platform === PLATFORM.NODE) {
+  const streamsModule = require("node:stream/web")
+
   //@ts-ignore Cross Runtime
   ReadableStream = streamsModule.ReadableStream
   //@ts-ignore Cross Runtime

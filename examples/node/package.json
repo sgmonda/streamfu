@@ -1,0 +1,9 @@
+{
+  "name": "streamfu-example-node",
+  "version": "1.0.0",
+  "description": "Using streamfu from Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx -y tsx index.ts"
+  }
+}
