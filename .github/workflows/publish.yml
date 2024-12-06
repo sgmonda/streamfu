@@ -6,6 +6,9 @@ on:
 jobs:
   test:
     uses: ./.github/workflows/test.yml
+    permissions:
+      contents: read
+      id-token: write
   publish:
     runs-on: ubuntu-latest
     steps:
