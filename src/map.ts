@@ -1,4 +1,4 @@
-import { TransformStream } from "./util/stream.ts"
+import { TransformStream } from "./system/stream.ts"
 
 type ITransformer<Tin, Tout> = (chunk: Tin) => Tout | Promise<Tout>
 

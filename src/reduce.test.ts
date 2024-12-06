@@ -34,6 +34,14 @@ const TEST_CASES = [{
     initialValue: 0,
   },
   expected: 36.641,
+}, {
+  title: "one item fails",
+  conditions: {
+    iterable: [1, 2, 3, "four"],
+    reducer: (_acc: number, _chunk: number) => Promise.reject(new Error("crash")),
+    initialValue: 0,
+  },
+  expected: null,
 }]
 
 Deno.test("reduce()", async ({ step }) => {
@@ -41,14 +49,37 @@ Deno.test("reduce()", async ({ step }) => {
 
   async function runTest({ title, conditions, expected }: typeof TEST_CASES[number]) {
     const { iterable, reducer, initialValue } = conditions
+
     await step(title, async () => {
       const readable = createReadable(iterable)
+      if (expected) {
+        await testSuccess(readable)
+      } else {
+        await testFailure(readable)
+      }
+    })
+
+    async function testSuccess(readable: ReadableStream) {
       const observed = await reduce(
-        readable as ReadableStream,
+        readable,
         reducer as (acc: unknown, chunk: unknown) => unknown,
         initialValue,
       )
       assertEquals(observed, expected)
-    })
+    }
+
+    async function testFailure(readable: ReadableStream) {
+      try {
+        await reduce(
+          readable,
+          reducer as (acc: unknown, chunk: unknown) => unknown,
+          initialValue,
+        )
+        throw new Error("Expected an error")
+      } catch (error: unknown) {
+        if (!(error instanceof Error)) throw error
+        assertEquals(error.message, "crash")
+      }
+    }
   }
 })

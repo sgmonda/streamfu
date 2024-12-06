@@ -1,8 +1,10 @@
 ![header](https://github.com/user-attachments/assets/97963ef5-68a6-449e-ad16-081a9bdc9103)
 
+[![JSR Score](https://jsr.io/badges/@sgmonda/streamfu/score)](https://jsr.io/@sgmonda/streamfu) ![Tests](https://github.com/github/docs/actions/workflows/test.yml/badge.svg)
+
 # Streamfu
 
-Functional programming utilities for working with streams in JS/TS in a really intuitive and easy way.
+Functional programming utilities for working with streams in JS/TS.
 
 ## Introduction
 
@@ -12,7 +14,10 @@ If you know how to do something with arrays, you can do it with streams too!
 
 ## Usage
 
-This package provides a simple and functional way to work with streams in JS/TS. To use it, you can install it from your favorite package manager:
+This package provides a simple and functional way to work with streams in JS/TS. To use it, you can install it from your favorite package manager.
+
+<details>
+  <summary>See installing commands for NPM, Deno, Bun...</summary>
 
 - npm: `npx jsr add @sgmonda/streamfu`
 - yarn: `yarn dlx jsr add @sgmonda/streamfu`
@@ -20,10 +25,29 @@ This package provides a simple and functional way to work with streams in JS/TS.
 - deno: `deno add jsr:@sgmonda/streamfu`
 - bun: `bunx jsr add @sgmonda/streamfu`
 
-Then, just import the module from your code:
+</details>
+
+Then, just import the whole module or some of its components from your code:
 
 ```typescript
 import * as streamfu from "@sgmonda/streamfu"
+import { map, reduce } from "@sgmonda/streamfu"
 ```
 
-Enjoy it!
+Now you're ready to use the utilities in your code!
+
+### `createReadable()` and `createWritable()`
+
+To be completed
+
+### `map()`
+
+To be completed
+
+### `reduce()`
+
+To be completed
+
+### `filter()`
+
+To be completed
