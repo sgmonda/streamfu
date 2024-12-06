@@ -1,5 +1,11 @@
 name: Publish
+on:
+  push:
+    branches:
+      - main
 jobs:
+  test:
+    uses: ./.github/workflows/test.yml
   publish:
     steps:
       - uses: actions/checkout@v4
