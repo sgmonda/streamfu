@@ -57,7 +57,7 @@ Deno.test("map()", async ({ step }) => {
 
   await step("maps chunks", async () => {
     const readable = streamfu.createReadable([1, 2, 3])
-    const mapped = readable.pipeThrough(streamfu.map((chunk: number) => chunk * 2))
+    const mapped = streamfu.map(readable, (chunk: number) => chunk * 2)
     const reader = mapped.getReader()
     const items = [
       (await reader.read()).value,
