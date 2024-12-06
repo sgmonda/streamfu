@@ -14,6 +14,12 @@ const TEST_CASES = [{
   ],
   expected: [[1], [2], [3]],
 }, {
+  title: "one empty stream",
+  streams: [
+    createReadable([]),
+  ],
+  expected: [],
+}, {
   title: "many streams",
   streams: [
     createReadable([1, 2, 3]),
@@ -21,6 +27,14 @@ const TEST_CASES = [{
     createReadable([true, false, false, true, false]),
   ],
   expected: [[1, "a", true], [2, "b", false], [3, "c", false]],
+}, {
+  title: "many empty streams",
+  streams: [
+    createReadable([]),
+    createReadable([]),
+    createReadable([]),
+  ],
+  expected: [],
 }]
 
 Deno.test("zip()", async ({ step }) => {
@@ -31,10 +45,3 @@ Deno.test("zip()", async ({ step }) => {
     })
   }
 })
-
-// const zipped = zip(
-//   createReadable([1, 2, 3]),
-//   createReadable(["a", "b"]),
-// )
-
-// const l = await list(zipped)
