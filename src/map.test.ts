@@ -50,6 +50,22 @@ const TEST_CASES = [{
     ],
   },
   expected: ["2.130", "4.260", "6.390"],
+}, {
+  title: "remove non-json-serializable items",
+  conditions: {
+    iterable: [1, "2", 3, () => 23, { four: 4 }, [5]],
+    transforms: [
+      JSON.stringify,
+      (chunk: unknown) => {
+        try {
+          return JSON.parse(chunk as string)
+        } catch (_) {
+          return undefined
+        }
+      },
+    ],
+  },
+  expected: [1, "2", 3, undefined, { four: 4 }, [5]],
 }]
 
 Deno.test("map()", async ({ step }) => {

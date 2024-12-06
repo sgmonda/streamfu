@@ -10,6 +10,7 @@ jobs:
       contents: read
       id-token: write
   publish:
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
