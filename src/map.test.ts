@@ -1,7 +1,7 @@
 import { assertEquals } from "asserts"
 import { map } from "./map.ts"
 import { createReadable } from "./createReadable.ts"
-import { reduce } from "./reduce.ts"
+import { list } from "./list.ts"
 
 const TEST_CASES = [{
   title: "double a list of numbers",
@@ -76,7 +76,7 @@ Deno.test("map()", async ({ step }) => {
     await step(title, async () => {
       const readable = createReadable(iterable)
       const stream = map(readable as ReadableStream, ...transforms as ((chunk: unknown) => unknown)[])
-      const observed = await reduce(stream, (acc: unknown[], chunk: unknown) => [...acc, chunk], [])
+      const observed = await list(stream)
       assertEquals(observed, expected)
     })
   }

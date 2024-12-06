@@ -1,6 +1,6 @@
 import { assertEquals } from "asserts"
 import { createReadable } from "./createReadable.ts"
-import { reduce } from "./reduce.ts"
+import { list } from "./list.ts"
 
 const TEST_CASES = [{
   title: "from an array",
@@ -42,7 +42,7 @@ Deno.test("createReadable()", async ({ step }) => {
   async function runTest({ title, iterable, expected }: typeof TEST_CASES[number]) {
     await step(title, async () => {
       const readable = createReadable(iterable)
-      const observed = await reduce(readable, (accum: unknown[], chunk: unknown) => [...accum, chunk], [])
+      const observed = await list(readable as ReadableStream)
       assertEquals(observed, expected)
     })
   }

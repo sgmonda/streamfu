@@ -1,7 +1,7 @@
 import { assertEquals } from "asserts/equals"
 import { createReadable } from "./createReadable.ts"
 import { filter } from "./filter.ts"
-import { reduce } from "./reduce.ts"
+import { list } from "./list.ts"
 
 const TEST_CASES = [{
   title: "filter even numbers",
@@ -35,7 +35,7 @@ Deno.test("filter()", async ({ step }) => {
       const readable = createReadable(iterable)
       const filterer = filter(predicate as (item: unknown) => boolean)
       const stream = readable.pipeThrough(filterer)
-      const observed = await reduce(stream, (acc: unknown[], chunk: unknown) => [...acc, chunk], [])
+      const observed = await list(stream)
       assertEquals(observed, expected)
     })
   }
