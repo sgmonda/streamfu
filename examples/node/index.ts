@@ -87,7 +87,7 @@ describe("filter()", () => {
 
   test("filters chunks", async () => {
     const readable = streamfu.createReadable([1, 2, 3])
-    const filtered = readable.pipeThrough(streamfu.filter((chunk) => chunk % 2 === 0))
+    const filtered = streamfu.filter(readable, (chunk) => chunk % 2 === 0)
     const reader = filtered.getReader()
     const items = [
       (await reader.read()).value,

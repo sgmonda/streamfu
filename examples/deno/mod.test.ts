@@ -88,7 +88,7 @@ Deno.test("filter()", async ({ step }) => {
 
   await step("filters chunks", async () => {
     const readable = streamfu.createReadable([1, 2, 3])
-    const filtered = readable.pipeThrough(streamfu.filter((chunk: number) => chunk % 2 === 0))
+    const filtered = streamfu.filter(readable, (chunk: number) => chunk % 2 === 0)
     const reader = filtered.getReader()
     const items = [
       (await reader.read()).value,

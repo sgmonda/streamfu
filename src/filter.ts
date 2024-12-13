@@ -8,11 +8,16 @@
  * @example const onlyStrings = filter<string>(item => typeof item === 'string');
  * @example const onlyPositive = filter<number>(num => num > 0);
  */
-export const filter = <T>(fn: (chunk: T) => boolean | Promise<boolean>): ReadableWritablePair<T> =>
-  new TransformStream<T, T>({
+export const filter = <T>(
+  readable: ReadableStream<T>,
+  fn: (chunk: T) => boolean | Promise<boolean>,
+): ReadableStream<T> => {
+  const transform = new TransformStream<T, T>({
     transform: async (chunk, controller) => {
       if (await fn(chunk)) {
         controller.enqueue(chunk)
       }
     },
   })
+  return readable.pipeThrough(transform)
+}

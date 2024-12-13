@@ -33,9 +33,9 @@ Deno.test("filter()", async ({ step }) => {
     const { iterable, predicate } = conditions
     await step(title, async () => {
       const readable = createReadable(iterable)
-      const filterer = filter(predicate as (item: unknown) => boolean)
-      const stream = readable.pipeThrough(filterer)
-      const observed = await list(stream)
+      // deno-lint-ignore no-explicit-any
+      const filtered = filter<any>(readable, predicate)
+      const observed = await list(filtered)
       assertEquals(observed, expected)
     })
   }
