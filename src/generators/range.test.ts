@@ -1,5 +1,4 @@
 import { assertEquals } from "asserts/equals"
-import { createReadable } from "../createReadable.ts"
 import { range } from "./range.ts"
 import { list } from "../list.ts"
 
@@ -30,7 +29,7 @@ Deno.test("range()", async ({ step }) => {
 
   async function runTest({ title, conditions, expected }: typeof TEST_CASES[0]) {
     await step(title, async () => {
-      const readable = createReadable(range(conditions.min, conditions.max, conditions.step))
+      const readable = range(conditions.min, conditions.max, conditions.step)
       const observed = await list(readable)
       assertEquals(observed, expected)
     })
