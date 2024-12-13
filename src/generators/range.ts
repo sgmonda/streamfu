@@ -15,7 +15,7 @@ export const range = (min: number, max: number, step: number = 1): ReadableStrea
   return createReadable(rangeGen(min, max, step))
 }
 
-export function* rangeGen(min: number, max: number, step: number = 1) {
+export function* rangeGen(min: number, max: number, step: number = 1): Generator<number> {
   if (min < max) {
     for (let i = min; i <= max; i += step) {
       yield i

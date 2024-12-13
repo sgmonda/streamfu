@@ -12,7 +12,7 @@ export const words = (chars: number, length: number): ReadableStream<string> => 
   return createReadable(wordsGen(chars, length))
 }
 
-export function* wordsGen(chars: number, length: number) {
+export function* wordsGen(chars: number, length: number): Generator<string> {
   for (let i = 0; i < length; i += 1) {
     yield genRandomWord(chars)
   }
