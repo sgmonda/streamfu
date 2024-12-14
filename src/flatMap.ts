@@ -13,7 +13,7 @@ import { map } from "./map.ts"
  */
 export const flatMap = <T, U>(
   readable: ReadableStream<T>,
-  mapper: (chunk: T) => ReadableStream<U>,
+  mapper: (chunk: T) => U[],
 ): ReadableStream<U> => {
   const mapped = map(readable, mapper)
   return flat<U>(mapped)
