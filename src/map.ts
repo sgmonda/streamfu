@@ -1,6 +1,6 @@
 import { TransformStream } from "./system/stream.ts"
 
-type ITransformer<Tin, Tout> = (chunk: Tin) => Tout | Promise<Tout>
+type ITransformer<Tin, Tout> = (chunk: Tin, i: number) => Tout | Promise<Tout>
 
 /**
  * Creates a new stream by applying one or more transform functions to each chunk of the input stream.
@@ -21,10 +21,11 @@ export const map = <Tin = unknown, Tout = Tin>(
   // deno-lint-ignore no-explicit-any
   ...transformers: ITransformer<any, any>[] // TODO Find a way to check pipe types statically
 ): ReadableStream<Tout> => {
+  let i = 0
   const applyTransformers = async (chunk: Tin): Promise<Tout> => {
     let value: unknown = chunk
     for (const fn of transformers) {
-      value = await fn(value)
+      value = await fn(value, i++)
     }
     return value as Tout
   }

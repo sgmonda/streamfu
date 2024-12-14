@@ -17,7 +17,7 @@ const TEST_CASES = [{
   conditions: {
     iterable: ["1", "2", "3"],
     transforms: [
-      parseInt,
+      (num: string) => parseInt(num, 10),
     ],
   },
   expected: [1, 2, 3],

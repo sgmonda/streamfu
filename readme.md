@@ -10,9 +10,25 @@ Functional programming utilities for working with streams in JS/TS.
 
 ## Introduction
 
-Streams are async collections of data, conceptually similar to arrays, but very different in practice. Streams are a powerful tool for working with async data, but they can be hard to work with. This package provides a set of utilities to work with streams in a functional way, making it easier to work with them.
+Streams are async collections of data, conceptually similar to arrays, but very different in practice:
 
-If you know how to do something with arrays, you can do it with streams too!
+- They can be infinite
+- They can be asynchronous
+- They are not fully loaded in memory
+
+For these reasons, streams are a powerful tool for working with async and huge data, but they can be hard to work with.
+
+This package provides a set of utilities to work with streams in a functional way, making it easier to work with them like you would with arrays.
+
+### Consuming vs non-consuming operations
+
+Streams can be consumed only once. This means that, if you consume a stream, you can't consume it again. This is a fundamental difference with arrays, which can be consumed multiple times.
+
+`streamfu` provides a set of utilities that allow you to work with streams in a functional way, without consuming them. Take a look at `map()`, `flat()`, `zip()`... They all return a new stream, without consuming the original one.
+
+But there are some operations that consume the stream, like `reduce()`, `some()` or `indexOf()`. These operations are marked as such in the documentation.
+
+Just be sure to understand when you're consuming a stream and when you're not, to avoid unexpected behaviors. Here's a trick: if the operation returns a new stream, it's not consuming it. If it returns a promised value, it's consuming it.
 
 ## Usage
 
@@ -38,21 +54,19 @@ import { map, reduce } from "@sgmonda/streamfu"
 
 Now you're ready to use the utilities in your code!
 
-### `createReadable()` and `createWritable()`
+## Contributing
 
-To be completed
+This package is open to contributions. If you want to contribute, you can fork the repository and submit a PR. Here are some key points to consider:
 
-### `map()`
+- The code should be well tested. Only a 100% coverage is accepted.
+- The code should be well documented. Every exported function should have a JSDoc comment.
 
-To be completed
+### Publishing
 
-### `reduce()`
+This package is published to JSR by mean of GitHub CI, so a new version is published automatically when:
 
-To be completed
-
-### `filter()`
-
-To be completed
+- A new commit is pushed to the `main` branch
+- `version` changes in `deno.json`
 
 ## TODO
 
