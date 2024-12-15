@@ -70,4 +70,4 @@ This package is published to JSR by mean of GitHub CI, so a new version is publi
 
 ## TODO
 
-- [ ] Unify API for `map`, `reduce`, `filter`. Should they all receive a readable as first argument?
+- [x] Unify API for `map`, `reduce`, `filter`. Should they all receive a readable as first argument?
