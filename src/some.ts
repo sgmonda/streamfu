@@ -1,5 +1,6 @@
 /**
  * Checks if some chunk in the readable stream satisfies the provided testing function.
+ * NOTE: This consumes the stream so it can't be reused after calling this function.
  *
  * @param readable A readable stream whose chunks will be tested
  * @param predicate A function that accepts a chunk from the stream and returns a boolean

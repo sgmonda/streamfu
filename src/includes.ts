@@ -1,5 +1,6 @@
 /**
- * Check if a value is included in a readable stream
+ * Check if a value is included in a readable stream.
+ * NOTE: This consumes the stream so it can't be reused after calling this function.
  *
  * @param readable The readable stream to check
  * @param value The value to search for

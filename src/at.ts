@@ -1,5 +1,6 @@
 /**
- * Retrieve the value at the given index from a ReadableStream
+ * Retrieve the value at the given index from a ReadableStream.
+ * NOTE: This consumes the stream so it can't be reused after calling this function.
  *
  * @param readable A readable stream to get the value from
  * @param index The index of the value to retrieve

@@ -2,6 +2,7 @@ type IReducer<Tin, Taccum> = (acc: Taccum, chunk: Tin, index: number) => Taccum 
 
 /**
  * Reduces a stream into a single value, using the given function. This is similar to the `Array.prototype.reduce` method.
+ * NOTE: This consumes the stream so it can't be reused after calling this function.
  *
  * @param readable Stream to reduce
  * @param fn Function to apply to each chunk, returning the new accumulator value

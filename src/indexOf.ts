@@ -1,5 +1,6 @@
 /**
  * Returns the index of the first occurrence of a specified value in a ReadableStream.
+ * NOTE: This consumes the stream so it can't be reused after calling this function.
  *
  * @param readable The readable stream to search
  * @param value The value to search for
