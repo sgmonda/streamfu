@@ -1,10 +1,10 @@
 /**
- * Remove and/or insert items into a ReadableStream at a given index.
+ * Replace items from a ReadableStream, starting at a given index.
  *
  * @param readable The readable stream to splice
- * @param start The index at which to start changing the stream
- * @param deleteCount The number of items to remove from the stream
- * @param items The items to insert into the stream
+ * @param start The index at which to start replacing items from the stream
+ * @param replaced The number of items to replace from the stream. If 0, no items will be removed or inserted
+ * @param newItems The items to insert into the stream
  * @returns A readable stream with the items removed and/or inserted
  *
  * @example const oneless = splice(readable, 2, 1)
@@ -13,44 +13,22 @@
 export const splice = <T>(
   readable: ReadableStream<T>,
   start: number,
-  deleteCount: number,
-  ...items: T[]
+  replaced: number,
+  ...newItems: T[]
 ): ReadableStream<T> => {
+  let index = 0
   const transform = new TransformStream<T, T>({
     transform: (chunk, controller) => {
+      if (index++ >= start && replaced > 0) {
+        replaced--
+        if (!replaced) {
+          newItems.forEach((item) => controller.enqueue(item))
+        }
+        return
+      }
       controller.enqueue(chunk)
     },
   })
 
-  const writer = transform.writable.getWriter()
-  let index = 0
-  const reader = readable.getReader()
-
-  const read = async () => {
-    const { done, value } = await reader.read()
-    if (done) {
-      writer.close()
-      return
-    }
-
-    if (index >= start && index < start + deleteCount) {
-      index++
-      read()
-      return
-    }
-
-    if (index === start + deleteCount) {
-      for (const item of items) {
-        writer.write(item)
-      }
-    }
-
-    writer.write(value)
-    index++
-    read()
-  }
-
-  read()
-
-  return transform.readable
+  return readable.pipeThrough(transform)
 }

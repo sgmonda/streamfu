@@ -8,7 +8,7 @@ const TEST_CASES = [{
   conditions: {
     data: [],
     index: 8,
-    removed: 0,
+    replaced: 0,
     inserted: [],
   },
   expected: [],
@@ -17,43 +17,43 @@ const TEST_CASES = [{
   conditions: {
     data: [33],
     index: 0,
-    removed: 1,
+    replaced: 1,
     inserted: [],
   },
   expected: [],
 }, {
-  title: "single item stream, inserting",
+  title: "single item stream, inserting without removing (do nothing)",
   conditions: {
     data: [33],
     index: 0,
-    removed: 0,
+    replaced: 0,
     inserted: [44],
   },
-  expected: [44, 33],
+  expected: [33],
 }, {
   title: "multiple items stream, removing",
   conditions: {
     data: [11, 22, 33, 44, 55],
     index: 2,
-    removed: 1,
+    replaced: 1,
     inserted: [],
   },
   expected: [11, 22, 44, 55],
 }, {
-  title: "multiple items stream, inserting",
+  title: "multiple items stream, inserting without removing (do nothing)",
   conditions: {
     data: [11, 22, 33, 44, 55],
     index: 2,
-    removed: 0,
+    replaced: 0,
     inserted: [66, 77],
   },
-  expected: [11, 22, 66, 77, 33, 44, 55],
+  expected: [11, 22, 33, 44, 55],
 }, {
   title: "multiple items stream, removing and inserting",
   conditions: {
     data: [11, 22, 33, 44, 55],
     index: 1,
-    removed: 2,
+    replaced: 2,
     inserted: [66, 77],
   },
   expected: [11, 66, 77, 44, 55],
@@ -65,7 +65,7 @@ Deno.test("splice()", async ({ step }) => {
   async function runTest({ title, conditions, expected }: typeof TEST_CASES[0]) {
     await step(title, async () => {
       const readable = createReadable(conditions.data)
-      const spliced = splice(readable, conditions.index, conditions.removed, ...conditions.inserted)
+      const spliced = splice(readable, conditions.index, conditions.replaced, ...conditions.inserted)
       const observed = await list(spliced)
       assertEquals(observed, expected)
     })
