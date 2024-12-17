@@ -1,7 +1,6 @@
 ![header](https://github.com/user-attachments/assets/97963ef5-68a6-449e-ad16-081a9bdc9103)
 
-[![JSR Score](https://jsr.io/badges/@sgmonda/streamfu/score)](https://jsr.io/@sgmonda/streamfu) ![Test](https://github.com/github/docs/actions/workflows/publish.yml/badge.svg)
-
+Proudly published following high quality code standards: [![JSR Score](https://jsr.io/badges/@sgmonda/streamfu/score)](https://jsr.io/@sgmonda/streamfu)
 
 # Streamfu
 
