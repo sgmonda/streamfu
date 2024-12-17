@@ -1,8 +1,6 @@
 ![header](https://github.com/user-attachments/assets/97963ef5-68a6-449e-ad16-081a9bdc9103)
 
-Proudly published following high quality code standards: [![JSR Score](https://jsr.io/badges/@sgmonda/streamfu/score)](https://jsr.io/@sgmonda/streamfu)
-
-# Streamfu
+# Streamfu [![JSR Score](https://jsr.io/badges/@sgmonda/streamfu/score)](https://jsr.io/@sgmonda/streamfu)
 
 Pure utilities for working with streams in JS/TS in a functional way, making your code readable, predictable, maintainable and testable.
 
