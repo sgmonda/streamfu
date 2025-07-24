@@ -27,6 +27,7 @@ if (platform === PLATFORM.DENO) {
   // //@ts-ignore Cross Runtime
   // TransformStream = streamsModule.TransformStream
 } else if (platform === PLATFORM.NODE) {
+  // @ts-ignore JSR no reconoce 'require' al publicar
   const streamsModule = require("node:stream/web")
 
   //@ts-ignore Cross Runtime

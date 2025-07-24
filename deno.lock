@@ -80,11 +80,6 @@
     "dependencies": [
       "jsr:@std/assert@*",
       "jsr:@std/streams@*"
-    ],
-    "packageJson": {
-      "dependencies": [
-        "npm:@types/node@^24.1.0"
-      ]
-    }
+    ]
   }
 }
