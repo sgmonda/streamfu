@@ -66,10 +66,16 @@ Now you're ready to use the utilities in your code!
 
 ## Contributing
 
-This package is open to contributions. If you want to contribute, you can fork the repository and submit a PR. Here are some key points to consider:
+This package is open to contributions. If you want to contribute, just fork the repository, make your changes, and submit a PR. Remember to include tests and run the following:
 
-- The code should be well tested. Only a 100% coverage is accepted.
-- The code should be well documented. Every exported function should have a JSDoc comment.
+```
+deno task test
+```
+
+⚠️ **IMPORTANT:** Here are some key points to consider:
+
+- The code should be well tested. Only a 100% coverage will pass our checks.
+- The code should be well documented. Every exported function should have a complete JSDoc comment.
 
 ### Publishing
 
@@ -77,7 +83,3 @@ This package is published to JSR by mean of GitHub CI, so a new version is publi
 
 - A new commit is pushed to the `main` branch
 - `version` changes in `deno.json`
-
-## TODO
-
-- [x] Unify API for `map`, `reduce`, `filter`. Should they all receive a readable as first argument?
