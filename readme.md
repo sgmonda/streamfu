@@ -72,8 +72,9 @@ This package is open to contributions. If you want to contribute, just fork the 
 deno task test
 ```
 
-⚠️ **IMPORTANT:** Here are some key points to consider:
+Some key points to consider:
 
+- Commits must follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
 - The code should be well tested. Only a 100% coverage will pass our checks.
 - The code should be well documented. Every exported function should have a complete JSDoc comment.
 
