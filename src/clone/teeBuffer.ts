@@ -1,42 +1,44 @@
-export class TeeBuffer<T> {
-  private iterator: Iterator<T>
-  private buffers: T[][]
-  private dones: boolean[]
-  private done: boolean = false
+function makeClone<T>(
+  iterable: Iterable<T>,
+  copies: number,
+  index: number,
+): Iterable<T> {
+  const iterator = iterable[Symbol.iterator]()
+  const buffers: T[][] = Array.from({ length: copies }, () => [])
+  const dones: boolean[] = Array.from({ length: copies }, () => false)
+  let done = false
 
-  constructor(iterable: Iterable<T>, copies: number) {
-    this.iterator = iterable[Symbol.iterator]()
-    this.buffers = Array.from({ length: copies }, () => [])
-    this.dones = Array.from({ length: copies }, () => false)
-  }
-
-  makeIterator(index: number): Iterable<T> {
-    const self = this
-    return {
-      [Symbol.iterator](): Iterator<T> {
-        return {
-          next(): IteratorResult<T> {
-            if (self.dones[index]) return { done: true, value: undefined }
-            if (self.buffers[index].length === 0 && !self.done) {
-              const { value, done } = self.iterator.next()
-              if (!done) {
-                for (let i = 0; i < self.buffers.length; ++i) {
-                  self.buffers[i].push(value)
-                }
-              } else {
-                self.done = true
+  return {
+    [Symbol.iterator](): Iterator<T> {
+      return {
+        next(): IteratorResult<T> {
+          if (dones[index]) return { done: true, value: undefined }
+          if (buffers[index].length === 0 && !done) {
+            const { value, done: iterDone } = iterator.next()
+            if (!iterDone) {
+              for (let i = 0; i < buffers.length; ++i) {
+                buffers[i].push(value)
               }
-            }
-            if (self.buffers[index].length > 0) {
-              const value = self.buffers[index].shift()!
-              return { value, done: false }
             } else {
-              self.dones[index] = true
-              return { done: true, value: undefined }
+              done = true
             }
-          },
-        }
-      },
-    }
+          }
+          if (buffers[index].length > 0) {
+            const value = buffers[index].shift()!
+            return { value, done: false }
+          } else {
+            dones[index] = true
+            return { done: true, value: undefined }
+          }
+        },
+      }
+    },
   }
+}
+
+export function teeIterable<T>(
+  iterable: Iterable<T>,
+  copies: number,
+): Iterable<T>[] {
+  return Array.from({ length: copies }, (_, i) => makeClone<T>(iterable, copies, i))
 }
