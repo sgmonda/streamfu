@@ -1,5 +1,4 @@
-// deno-lint-ignore-file no-window no-process-globals
-
+import process from "node:process"
 import { UnknownPlatformError } from "../errors.ts"
 
 export enum PLATFORM {
@@ -12,6 +11,7 @@ export enum PLATFORM {
 export let platform: PLATFORM
 
 //@ts-ignore Cross Runtime
+// deno-lint-ignore no-window
 if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   platform = PLATFORM.WEB
   //@ts-ignore Cross Runtime
