@@ -1,5 +1,5 @@
 import { assertEquals } from "asserts/equals"
-import { cloneAsyncIterable } from "./cloneAsyncIterable.ts"
+import { cloneIterable } from "./cloneIterable.ts"
 
 async function collect<T>(iter: AsyncIterable<T>): Promise<T[]> {
   const result: T[] = []
@@ -7,29 +7,26 @@ async function collect<T>(iter: AsyncIterable<T>): Promise<T[]> {
   return result
 }
 
-Deno.test(
-  "cloneAsyncIterable() - correctly clones an async iterable",
-  async () => {
-    async function* gen() {
-      yield 1
-      yield 2
-      yield 3
-    }
-    const [a, b] = cloneAsyncIterable(gen(), 2)
-    assertEquals(await collect(a), [1, 2, 3])
-    assertEquals(await collect(b), [1, 2, 3])
-  },
-)
+Deno.test("cloneIterable() - correctly clones an async iterable", async () => {
+  async function* gen() {
+    yield 1
+    yield 2
+    yield 3
+  }
+  const [a, b] = cloneIterable(gen(), 2)
+  assertEquals(await collect(a), [1, 2, 3])
+  assertEquals(await collect(b), [1, 2, 3])
+})
 
 Deno.test(
-  "cloneAsyncIterable() - clones can advance at different rates",
+  "cloneIterable() - clones can advance at different rates",
   async () => {
     async function* gen() {
       yield 10
       yield 20
       yield 30
     }
-    const [a, b, c] = cloneAsyncIterable(gen(), 3)
+    const [a, b, c] = cloneIterable(gen(), 3)
     const ita = a[Symbol.asyncIterator]()
     const itb = b[Symbol.asyncIterator]()
     // a consumes one
@@ -49,9 +46,9 @@ Deno.test(
   },
 )
 
-Deno.test("cloneAsyncIterable() - empty iterable", async () => {
+Deno.test("cloneIterable() - empty iterable", async () => {
   async function* gen() {}
-  const [a, b] = cloneAsyncIterable(gen(), 2)
+  const [a, b] = cloneIterable(gen(), 2)
   assertEquals(await collect(a), [])
   assertEquals(await collect(b), [])
 })

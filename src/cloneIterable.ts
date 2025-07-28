@@ -1,4 +1,4 @@
-function teeAsyncIterable<T>(
+function teeIterable<T>(
   iterable: AsyncIterable<T>,
   copies: number,
 ): AsyncIterable<T>[] {
@@ -58,9 +58,9 @@ function teeAsyncIterable<T>(
   return Array.from({ length: copies }, (_, i) => makeClone(i))
 }
 
-export function cloneAsyncIterable<T>(
+export function cloneIterable<T>(
   iterable: AsyncIterable<T>,
   copies: number,
 ): AsyncIterable<T>[] {
-  return teeAsyncIterable(iterable, copies)
+  return teeIterable(iterable, copies)
 }
