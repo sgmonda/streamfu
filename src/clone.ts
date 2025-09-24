@@ -1,3 +1,14 @@
+/**
+ * Clones an async iterable, like a stream. This is very useful when using stuff that consumes streams, like `at()` or `reduce()`.
+ * Using a cloned stream allows you to use the original stream multiple times with these operations.
+ *
+ * @param iterable An async iterable to clone
+ * @returns A cloned async iterable
+ */
+export function clone<T>(iterable: AsyncIterable<T>): AsyncIterable<T> {
+  return teeIterable(iterable, 1)[0]
+}
+
 function teeIterable<T>(
   iterable: AsyncIterable<T>,
   copies: number,
@@ -56,11 +67,4 @@ function teeIterable<T>(
   }
 
   return Array.from({ length: copies }, (_, i) => makeClone(i))
-}
-
-export function cloneIterable<T>(
-  iterable: AsyncIterable<T>,
-  copies: number,
-): AsyncIterable<T>[] {
-  return teeIterable(iterable, copies)
 }
