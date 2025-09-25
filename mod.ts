@@ -18,7 +18,7 @@ export * from "./src/indexOf.ts"
 // export * from "./src/shift.ts" // TODO Implement
 export * from "./src/splice.ts"
 export * from "./src/slice.ts"
-// export * from "./src/with.ts" // TODO Implement
+export * from "./src/withs.ts"
 export * from "./src/list.ts"
 export * from "./src/map.ts"
 export * from "./src/reduce.ts"
