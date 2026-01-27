@@ -40,6 +40,29 @@ const mappedStream = map(stream, (value) => value * 2)
 
 Just be sure to **understand when you're consuming a stream** and when you're not, to avoid unexpected behaviors. Here's a trick: if the operation returns a new stream, it's not consuming the input one. If it returns a promised value, then it's consuming it.
 
+#### Operations comparison table
+
+| Operation | Consumes | Returns | Description |
+|-----------|:--------:|---------|-------------|
+| `at()` | ✅ | `Promise<T \| undefined>` | Get value at index |
+| `branch()` | ❌* | `ReadableStream<T>[]` | Clone stream into multiple branches |
+| `concat()` | ❌ | `ReadableStream<T>` | Concatenate multiple streams |
+| `every()` | ✅ | `Promise<boolean>` | Test if all chunks pass predicate |
+| `filter()` | ❌ | `ReadableStream<T>` | Filter chunks by predicate |
+| `flat()` | ❌ | `ReadableStream<T>` | Flatten nested arrays |
+| `flatMap()` | ❌ | `ReadableStream<U>` | Map + flatten in one step |
+| `includes()` | ✅ | `Promise<boolean>` | Check if value exists |
+| `indexOf()` | ✅ | `Promise<number>` | Find index of value |
+| `list()` | ✅ | `Promise<T[]>` | Collect all chunks into array |
+| `map()` | ❌ | `ReadableStream<Tout>` | Transform each chunk |
+| `reduce()` | ✅ | `Promise<Taccum>` | Reduce to single value |
+| `slice()` | ❌ | `ReadableStream<T>` | Extract portion of stream |
+| `some()` | ✅ | `Promise<boolean>` | Test if any chunk passes predicate |
+| `splice()` | ❌ | `ReadableStream<T>` | Replace items at index |
+| `zip()` | ❌ | `ReadableStream<[...]>` | Combine streams into tuples |
+
+*\* `branch()` locks the original stream but doesn't consume it.*
+
 ## Usage
 
 This package provides a simple and functional way to work with streams in JS/TS. To use it, you can install it from your favorite package manager.
