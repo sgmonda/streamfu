@@ -40,6 +40,29 @@ const mappedStream = map(stream, (value) => value * 2)
 
 Just be sure to **understand when you're consuming a stream** and when you're not, to avoid unexpected behaviors. Here's a trick: if the operation returns a new stream, it's not consuming the input one. If it returns a promised value, then it's consuming it.
 
+#### Operations comparison table
+
+| Operation | Consumes | Returns | Description |
+|-----------|:--------:|---------|-------------|
+| `branch()` | no* | `ReadableStream<T>[]` | Clone stream into multiple branches |
+| `concat()` | no | `ReadableStream<T>` | Concatenate multiple streams |
+| `filter()` | no | `ReadableStream<T>` | Filter chunks by predicate |
+| `flat()` | no | `ReadableStream<T>` | Flatten nested arrays |
+| `flatMap()` | no | `ReadableStream<U>` | Map + flatten in one step |
+| `map()` | no | `ReadableStream<Tout>` | Transform each chunk |
+| `slice()` | no | `ReadableStream<T>` | Extract portion of stream |
+| `splice()` | no | `ReadableStream<T>` | Replace items at index |
+| `zip()` | no | `ReadableStream<[...]>` | Combine streams into tuples |
+| `at()` | yes | `Promise<T \| undefined>` | Get value at index |
+| `every()` | yes | `Promise<boolean>` | Test if all chunks pass predicate |
+| `includes()` | yes | `Promise<boolean>` | Check if value exists |
+| `indexOf()` | yes | `Promise<number>` | Find index of value |
+| `list()` | yes | `Promise<T[]>` | Collect all chunks into array |
+| `reduce()` | yes | `Promise<Taccum>` | Reduce to single value |
+| `some()` | yes | `Promise<boolean>` | Test if any chunk passes predicate |
+
+*\* `branch()` locks the original stream but doesn't consume it.*
+
 ## Usage
 
 This package provides a simple and functional way to work with streams in JS/TS. To use it, you can install it from your favorite package manager.
