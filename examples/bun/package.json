@@ -1,0 +1,8 @@
+{
+  "name": "streamfu-example-bun",
+  "version": "1.0.0",
+  "description": "Using streamfu from Bun",
+  "scripts": {
+    "test": "bun test"
+  }
+}
