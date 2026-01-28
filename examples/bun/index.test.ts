@@ -1,7 +1,7 @@
 import { describe, test, expect } from "bun:test"
 import fs from "node:fs"
 import path from "node:path"
-import * as streamfu from "../../mod"
+import * as streamfu from "../../mod.ts"
 
 describe("createReadable()", () => {
   test("is a function", () => {
