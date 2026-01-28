@@ -44,22 +44,22 @@ Just be sure to **understand when you're consuming a stream** and when you're no
 
 | Operation | Consumes | Returns | Description |
 |-----------|:--------:|---------|-------------|
-| `at()` | ✅ | `Promise<T \| undefined>` | Get value at index |
-| `branch()` | ❌* | `ReadableStream<T>[]` | Clone stream into multiple branches |
-| `concat()` | ❌ | `ReadableStream<T>` | Concatenate multiple streams |
-| `every()` | ✅ | `Promise<boolean>` | Test if all chunks pass predicate |
-| `filter()` | ❌ | `ReadableStream<T>` | Filter chunks by predicate |
-| `flat()` | ❌ | `ReadableStream<T>` | Flatten nested arrays |
-| `flatMap()` | ❌ | `ReadableStream<U>` | Map + flatten in one step |
-| `includes()` | ✅ | `Promise<boolean>` | Check if value exists |
-| `indexOf()` | ✅ | `Promise<number>` | Find index of value |
-| `list()` | ✅ | `Promise<T[]>` | Collect all chunks into array |
-| `map()` | ❌ | `ReadableStream<Tout>` | Transform each chunk |
-| `reduce()` | ✅ | `Promise<Taccum>` | Reduce to single value |
-| `slice()` | ❌ | `ReadableStream<T>` | Extract portion of stream |
-| `some()` | ✅ | `Promise<boolean>` | Test if any chunk passes predicate |
-| `splice()` | ❌ | `ReadableStream<T>` | Replace items at index |
-| `zip()` | ❌ | `ReadableStream<[...]>` | Combine streams into tuples |
+| `branch()` | no* | `ReadableStream<T>[]` | Clone stream into multiple branches |
+| `concat()` | no | `ReadableStream<T>` | Concatenate multiple streams |
+| `filter()` | no | `ReadableStream<T>` | Filter chunks by predicate |
+| `flat()` | no | `ReadableStream<T>` | Flatten nested arrays |
+| `flatMap()` | no | `ReadableStream<U>` | Map + flatten in one step |
+| `map()` | no | `ReadableStream<Tout>` | Transform each chunk |
+| `slice()` | no | `ReadableStream<T>` | Extract portion of stream |
+| `splice()` | no | `ReadableStream<T>` | Replace items at index |
+| `zip()` | no | `ReadableStream<[...]>` | Combine streams into tuples |
+| `at()` | yes | `Promise<T \| undefined>` | Get value at index |
+| `every()` | yes | `Promise<boolean>` | Test if all chunks pass predicate |
+| `includes()` | yes | `Promise<boolean>` | Check if value exists |
+| `indexOf()` | yes | `Promise<number>` | Find index of value |
+| `list()` | yes | `Promise<T[]>` | Collect all chunks into array |
+| `reduce()` | yes | `Promise<Taccum>` | Reduce to single value |
+| `some()` | yes | `Promise<boolean>` | Test if any chunk passes predicate |
 
 *\* `branch()` locks the original stream but doesn't consume it.*
 
