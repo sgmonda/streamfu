@@ -33,13 +33,13 @@ describe("createWritable()", () => {
   })
 
   test("returns a WritableStream", () => {
-    const writable = streamfu.createWritable((chunk) => {})
+    const writable = streamfu.createWritable((_chunk: unknown) => {})
     expect(writable).toBeInstanceOf(WritableStream)
   })
 
   test("writes chunks to a buffer", async () => {
     const chunks: number[] = []
-    const writable = streamfu.createWritable((chunk) => chunks.push(chunk))
+    const writable = streamfu.createWritable((chunk: number) => chunks.push(chunk))
     const writer = writable.getWriter()
     writer.write(1)
     writer.write(2)
@@ -57,7 +57,7 @@ describe("map()", () => {
 
   test("maps chunks", async () => {
     const readable = streamfu.createReadable([1, 2, 3])
-    const mapped = streamfu.map(readable, (chunk) => chunk * 2)
+    const mapped = streamfu.map(readable, (chunk: number) => chunk * 2)
     const reader = mapped.getReader()
     const items = [
       (await reader.read()).value,
@@ -76,7 +76,7 @@ describe("reduce()", () => {
 
   test("reduces chunks to a single value", async () => {
     const readable = streamfu.createReadable([1, 2, 3])
-    const result = await streamfu.reduce(readable, (acc, chunk) => acc + chunk, 0)
+    const result = await streamfu.reduce(readable, (acc: number, chunk: number) => acc + chunk, 0)
     expect(result).toBe(6)
   })
 })
@@ -88,7 +88,7 @@ describe("filter()", () => {
 
   test("filters chunks", async () => {
     const readable = streamfu.createReadable([1, 2, 3])
-    const filtered = streamfu.filter(readable, (chunk) => chunk % 2 === 0)
+    const filtered = streamfu.filter(readable, (chunk: number) => chunk % 2 === 0)
     const reader = filtered.getReader()
     const items = [
       (await reader.read()).value,
@@ -106,16 +106,22 @@ describe("mixed", () => {
 
     const r1c = streamfu.pipe(
       streamfu.createReadable(nodeReadable),
-      (r) => streamfu.flatMap(r, (chunk) => chunk.split(/\r\n/)),
-      (r) => streamfu.slice(r, 1),
-      (r) => streamfu.filter(r, (chunk) => chunk.length > 0),
-      (r) => streamfu.map(r, (chunk) => chunk.split(",")),
+      (r: ReadableStream<string>) => streamfu.flatMap(r, (chunk: string) => chunk.split(/\r?\n/)),
+      (r: ReadableStream<string>) => streamfu.slice(r, 1),
+      (r: ReadableStream<string>) => streamfu.filter(r, (chunk: string) => chunk.length > 0),
+      (r: ReadableStream<string>) => streamfu.map(r, (chunk: string) => chunk.split(",")),
     )
 
     const partstream = streamfu.pipe(
       streamfu.zip(ids, r1c),
-      (r) => streamfu.map(r, ([id, row], i) => ({ num: i + 1, id, name: row[0], population: parseInt(row[2]) })),
-      (r) => streamfu.slice(r, 17, 19),
+      (r: ReadableStream<[string, string[]]>) =>
+        streamfu.map(r, ([id, row]: [string, string[]], i: number) => ({
+          num: i + 1,
+          id,
+          name: row[0],
+          population: parseInt(row[2]),
+        })),
+      (r: ReadableStream<{ num: number; id: string; name: string; population: number }>) => streamfu.slice(r, 17, 19),
     )
 
     const part = await streamfu.list(partstream)
