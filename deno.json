@@ -12,7 +12,7 @@
     "check": "deno check src/**/*.ts *.ts",
     "lint": "deno fmt && deno lint src/**/*.ts *.ts",
     "test": {
-      "command": "rm -Rf coverage && deno test --allow-all --coverage && deno task test:examples && deno coverage --exclude=src/system --exclude=examples",
+      "command": "rm -Rf coverage && deno test --allow-all --coverage --ignore=examples/bun && deno task test:examples && deno coverage --exclude=src/system --exclude=examples",
       "dependencies": ["check", "lint"]
     },
     "test:examples": "deno task test:examples:node && deno task test:examples:bun",
