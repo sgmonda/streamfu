@@ -13,15 +13,8 @@ describe("createReadable()", () => {
 
   test("all iterable items are included as chunks", async () => {
     const readable = streamfu.createReadable([1, 2, 3])
-    expect(readable).toBeInstanceOf(ReadableStream)
-    const reader = readable.getReader()
-    const items = [
-      (await reader.read()).value,
-      (await reader.read()).value,
-      (await reader.read()).value,
-      (await reader.read()).value,
-    ]
-    expect(items).toEqual([1, 2, 3, undefined])
+    const items = await streamfu.list(readable)
+    expect(items).toEqual([1, 2, 3])
   })
 })
 
@@ -58,14 +51,8 @@ describe("map()", () => {
   test("maps chunks", async () => {
     const readable = streamfu.createReadable([1, 2, 3])
     const mapped = streamfu.map(readable, (chunk: number) => chunk * 2)
-    const reader = mapped.getReader()
-    const items = [
-      (await reader.read()).value,
-      (await reader.read()).value,
-      (await reader.read()).value,
-      (await reader.read()).value,
-    ]
-    expect(items).toEqual([2, 4, 6, undefined])
+    const items = await streamfu.list(mapped)
+    expect(items).toEqual([2, 4, 6])
   })
 })
 
@@ -89,12 +76,7 @@ describe("filter()", () => {
   test("filters chunks", async () => {
     const readable = streamfu.createReadable([1, 2, 3])
     const filtered = streamfu.filter(readable, (chunk: number) => chunk % 2 === 0)
-    const reader = filtered.getReader()
-    const items = [
-      (await reader.read()).value,
-      (await reader.read()).value,
-      (await reader.read()).value,
-    ]
-    expect(items).toEqual([2, undefined, undefined])
+    const items = await streamfu.list(filtered)
+    expect(items).toEqual([2])
   })
 })
