@@ -20,5 +20,9 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+      - name: Install example dependencies
+        run: |
+          cd examples/node && npm install
+          cd ../cloudflare-workers && npm install
       - name: Test
         run: deno task test
