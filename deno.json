@@ -1,7 +1,7 @@
 {
   "name": "@sgmonda/streamfu",
   "description": "Functional programming utilities for working with streams in JS/TS",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "exports": "./mod.ts",
   "imports": {
@@ -12,13 +12,14 @@
     "check": "deno check src/**/*.ts *.ts",
     "lint": "deno fmt && deno lint src/**/*.ts *.ts",
     "test": {
-      "command": "rm -Rf coverage && deno test --allow-all --coverage --ignore=examples/bun && deno task test:examples && deno coverage --exclude=src/system --exclude=examples",
+      "command": "rm -Rf coverage && deno test --allow-all --coverage --ignore=examples/bun,examples/cloudflare-workers && deno task test:examples && deno coverage --exclude=src/system --exclude=examples",
       "dependencies": ["check", "lint"]
     },
-    "test:examples": "deno task test:examples:node && deno task test:examples:bun",
+    "test:examples": "deno task test:examples:node && deno task test:examples:bun && deno task test:examples:cloudflare-workers",
     "test:examples:node": "cd ./examples/node && npm test && npx -y yarn test && npx -y pnpm test",
     "test:examples:deno": "cd ./examples/deno && deno test --allow-all",
-    "test:examples:bun": "cd ./examples/bun && bun test"
+    "test:examples:bun": "cd ./examples/bun && bun test",
+    "test:examples:cloudflare-workers": "cd ./examples/cloudflare-workers && npm test"
   },
   "fmt": {
     "useTabs": false,

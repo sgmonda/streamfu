@@ -6,6 +6,7 @@ export enum PLATFORM {
   DENO = "deno",
   BUN = "bun",
   WEB = "web",
+  CLOUDFLARE = "cloudflare",
 }
 
 export let platform: PLATFORM
@@ -19,6 +20,9 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   platform = PLATFORM.BUN
 } else if (typeof Deno !== "undefined") {
   platform = PLATFORM.DENO
+  //@ts-ignore Cross Runtime
+} else if (typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers") {
+  platform = PLATFORM.CLOUDFLARE
 } else if (typeof process !== "undefined" && process.versions?.node) {
   platform = PLATFORM.NODE
 } else {

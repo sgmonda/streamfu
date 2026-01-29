@@ -1,0 +1,13 @@
+{
+  "name": "streamfu-example-cloudflare-workers",
+  "version": "1.0.0",
+  "description": "Using streamfu from Cloudflare Workers",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.8.0",
+    "vitest": "^3.0.0",
+    "wrangler": "^4.0.0"
+  }
+}
