@@ -1,5 +1,6 @@
 /coverage
 .DS_Store
+node_modules
 
 # AI
 .claude

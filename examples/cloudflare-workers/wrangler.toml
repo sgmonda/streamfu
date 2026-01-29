@@ -1,0 +1,3 @@
+name = "streamfu-example-cloudflare-workers"
+main = "index.ts"
+compatibility_date = "2024-12-01"
