@@ -18,14 +18,9 @@ if (platform === PLATFORM.DENO) {
   //@ts-ignore Cross Runtime
   TransformStream = window.TransformStream
 } else if (platform === PLATFORM.BUN) {
-  // //@ts-ignore Cross Runtime
-  // const streamsModule = await import("node:stream/web")
-  // //@ts-ignore Cross Runtime
-  // ReadableStream = streamsModule.ReadableStream
-  // //@ts-ignore Cross Runtime
-  // WritableStream = streamsModule.WritableStream
-  // //@ts-ignore Cross Runtime
-  // TransformStream = streamsModule.TransformStream
+  ReadableStream = globalThis.ReadableStream
+  WritableStream = globalThis.WritableStream
+  TransformStream = globalThis.TransformStream
 } else if (platform === PLATFORM.NODE) {
   // @ts-ignore JSR no reconoce 'require' al publicar
   const streamsModule = require("node:stream/web")

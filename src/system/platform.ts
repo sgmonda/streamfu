@@ -17,7 +17,6 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   //@ts-ignore Cross Runtime
 } else if (typeof Bun !== "undefined") {
   platform = PLATFORM.BUN
-  throw new UnknownPlatformError() // TODO Support Bun once ReadableStream.from() is supported
 } else if (typeof Deno !== "undefined") {
   platform = PLATFORM.DENO
 } else if (typeof process !== "undefined" && process.versions?.node) {
