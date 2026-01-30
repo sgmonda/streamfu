@@ -64,12 +64,14 @@ const [c, d] = rest2.tee()
 // ✅ streamfu — declarative, composable, readable
 import { createReadable, pipe, filter, map, list } from "@sgmonda/streamfu"
 
-const results = await pipe(
+const readable = createReadable([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+
+const stream = pipe(
   readable,
   r => filter(r, n => n % 2 === 0),
   r => map(r, n => n * 2),
-  r => list(r),
 )
+const results = await list(stream)
 ```
 
 Same result. No manual readers. No mutable state. No `while (true)`. Just pure transformations.
@@ -131,12 +133,12 @@ import { createReadable, map, filter, reduce, pipe } from "@sgmonda/streamfu"
 const numbers = createReadable([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
 // Compose transformations with pipe
-const sumOfDoubledEvens = await pipe(
+const stream = pipe(
   numbers,
   r => filter(r, n => n % 2 === 0),  // keep even: 2, 4, 6, 8, 10
-  r => map(r, n => n * 2),            // double:   4, 8, 12, 16, 20
-  r => reduce(r, (a, b) => a + b, 0), // sum:      60
+  r => map(r, n => n * 2),           // double:   4, 8, 12, 16, 20
 )
+const sumOfDoubledEvens = await reduce(stream, (a, b) => a + b, 0) // sum: 60
 
 console.log(sumOfDoubledEvens) // 60
 ```
@@ -222,12 +224,12 @@ await output.pipeTo(createWritable(user => db.insert(user)))
 ```typescript
 import { range, pipe, map, filter, list } from "@sgmonda/streamfu"
 
-const primeSquares = await pipe(
+const stream = pipe(
   range(2, 1000),
   r => filter(r, isPrime),
   r => map(r, n => n ** 2),
-  r => list(r),
 )
+const primeSquares = await list(stream)
 ```
 
 ### Zip parallel data sources
@@ -238,11 +240,11 @@ import { zip, map, list } from "@sgmonda/streamfu"
 const paired = zip(namesStream, scoresStream)
 // Stream of [name, score] tuples
 
-const leaderboard = await pipe(
+const stream = pipe(
   paired,
   r => map(r, ([name, score]) => `${name}: ${score}`),
-  r => list(r),
 )
+const leaderboard = await list(stream)
 ```
 
 ---
