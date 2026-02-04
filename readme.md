@@ -11,8 +11,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![100% Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)]()
 
-**Functional stream utilities for JavaScript & TypeScript.**
-Works everywhere — Node.js, Deno, Bun, browsers.
+Functional stream utilities for JavaScript & TypeScript
 
 [Getting Started](#getting-started) · [API](#api-reference) · [Why streamfu?](#why-streamfu) · [Contributing](#contributing)
 
