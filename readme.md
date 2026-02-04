@@ -1,6 +1,6 @@
-![header](https://github.com/user-attachments/assets/97963ef5-68a6-449e-ad16-081a9bdc9103)
-
 <div align="center">
+
+<img width="150" height="100" alt="header" src="https://github.com/user-attachments/assets/bbbff16f-cd63-45db-890b-170aba10f643" />
 
 # streamfu
 
