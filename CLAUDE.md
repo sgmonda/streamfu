@@ -4,80 +4,80 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Streamfu is a TypeScript library providing pure functional utilities for working with Web Streams (`ReadableStream`). It mirrors familiar `Array.prototype` methods (map, filter, reduce, etc.) but operates on streams. Published to JSR as `@sgmonda/streamfu`. Supports Deno, Node.js, Bun, and browsers.
+Streamfu is a functional programming library providing array-like utilities for the Web Streams API. It makes streams composable and declarative, mirroring `Array.prototype` methods (map, filter, reduce, pipe, etc.). Published on JSR as `@sgmonda/streamfu`.
+
+Multi-runtime: works on Deno (primary), Node.js, Bun, browsers, and Cloudflare Workers.
 
 ## Commands
 
-**Run all checks + tests + coverage (the full CI pipeline locally):**
-
-```bash
-deno task test
-```
-
-This runs type-checking, formatting/linting, unit tests, cross-runtime example tests, and coverage report (100% required, excluding `src/system` and `examples`).
-
-**Individual tasks:**
-
 ```bash
 deno task check          # Type-check all TypeScript files
-deno task lint           # Format (deno fmt) and lint (deno lint)
-deno test src/map.ts.test.ts --allow-all   # Run a single test file
+deno task lint           # Format (deno fmt) + lint
+deno task test           # Full suite: type-check → lint → unit tests with coverage → example tests → coverage report
 ```
 
-**Cross-runtime example tests:**
+Run a single test file directly:
 
 ```bash
-deno task test:examples:node   # Tests with npm, yarn, pnpm
-deno task test:examples:bun    # Tests with Bun
+deno test --allow-all src/map.test.ts
 ```
+
+The `test` task has `check` and `lint` as dependencies — they run automatically before tests.
+
+Coverage excludes `src/system/` and `examples/`. The project maintains 100% coverage.
 
 ## Architecture
 
-### Two Categories of Stream Operations
+**Entry point**: `mod.ts` re-exports all public functions from `src/`.
 
-All exports live in `src/` with a 1:1 mapping between operator and file. Each file has a co-located `.test.ts` file.
+**Two categories of operations**:
 
-**Non-consuming operators** — take a `ReadableStream<T>`, return a new `ReadableStream<U>` (chainable):
-`map`, `filter`, `flat`, `flatMap`, `slice`, `splice`, `concat`, `zip`, `branch`
+- **Non-consuming** (return `ReadableStream`): `map`, `filter`, `flat`, `flatMap`, `slice`, `splice`, `concat`, `zip`, `branch`, `pipe`, `createReadable`, `createWritable`
+- **Consuming** (return `Promise<T>`): `reduce`, `list`, `at`, `some`, `every`, `includes`, `indexOf`, `forEach`
 
-These use the `TransformStream` + `pipeThrough` pattern:
+**Platform abstraction** (`src/system/`):
 
-```typescript
-readable.pipeThrough(new TransformStream({ transform(chunk, controller) { ... } }))
-```
+- `platform.ts` — runtime detection (Deno/Node/Bun/Web/Cloudflare) via feature detection
+- `stream.ts` — normalizes Stream API imports across runtimes (Node requires `node:stream/web`)
 
-**Consuming operators** — take a `ReadableStream<T>`, return a `Promise<U>` (terminal, stream cannot be reused):
-`reduce`, `list`, `some`, `every`, `at`, `includes`, `indexOf`
+**Generators** (`src/generators/`): `range()` for numeric sequences, `words()` for random strings.
 
-These use `getReader()` to consume the stream.
-
-### Composition
-
-`pipe(readable, ...fns)` chains operations: each function receives the previous stream and returns a new one. This is the primary way to build processing pipelines.
-
-`branch(readable, n)` clones a stream into `n` independent copies using `.tee()`, enabling multiple consumers. The original stream becomes locked.
-
-### Cross-Runtime Abstraction (`src/system/`)
-
-- `platform.ts` — detects runtime (Deno, Node, Bun, browser) via global checks
-- `stream.ts` — re-exports `ReadableStream`, `WritableStream`, `TransformStream` from the correct runtime source (Node requires `node:stream/web` via `require()`)
-
-All operator files import stream classes from `src/system/stream.ts`, not from globals directly.
-
-Bun lacks `ReadableStream.from()`, so `createReadable.ts` includes a polyfill using `ReadableStream` constructor with `start()`.
-
-### Entry Point
-
-`mod.ts` is the barrel file. Unimplemented operators (join, keys, lastIndexOf, pop, push, shift, with) are commented out as TODOs.
+**Composition**: `pipe()` chains operations via functional reduce. All operations are pure functions with no mutations and support async callbacks.
 
 ## Code Style
 
-- Deno formatter: 2-space indent, no semicolons, double quotes, 120-char line width
-- Deno linter: "fresh" and "recommended" rule tags
-- All exported functions require JSDoc with `@param`, `@returns`, and `@example` tags
-- Transform functions accept both sync and async callbacks
+Enforced by `deno fmt` configuration in `deno.json`:
 
-## CI/CD
+- No semicolons
+- Double quotes
+- 2-space indentation (no tabs)
+- 120-char line width
 
-- **PRs**: GitHub Actions runs `deno task test` (Deno v2, Node 20, Bun latest)
-- **Merge to main**: runs tests, then publishes to JSR via `npx jsr publish`
+Lint rules: `fresh` + `recommended` tags.
+
+## Testing Patterns
+
+Tests are colocated: `src/foo.ts` → `src/foo.test.ts`. They use Deno's native test runner with `@std/assert`.
+
+Tests follow a data-driven pattern:
+
+```typescript
+const TEST_CASES = [{ title: "...", conditions: { ... }, expected: { ... } }]
+
+Deno.test("functionName()", async ({ step }) => {
+  for (const tc of TEST_CASES) {
+    await step(tc.title, async () => { /* assertions */ })
+  }
+})
+```
+
+## Key Type Conventions
+
+- `IReadable<T>` — typed alias for `ReadableStream<T>`
+- `ITuple<T>` — maps `ReadableStream[]` types to value tuple types (used by `zip`)
+- Custom errors extend `StreamFuError` (defined in `src/errors.ts`)
+- Heavy use of generics for type inference through transformation chains
+
+## Publishing
+
+CI publishes to JSR automatically on push to `main` (via `.github/workflows/publish.yml`) after tests pass. Version is in `deno.json`.
