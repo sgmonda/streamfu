@@ -21,8 +21,12 @@ if (platform === PLATFORM.DENO) {
   ReadableStream = globalThis.ReadableStream
   WritableStream = globalThis.WritableStream
   TransformStream = globalThis.TransformStream
+} else if (platform === PLATFORM.CLOUDFLARE) {
+  ReadableStream = globalThis.ReadableStream
+  WritableStream = globalThis.WritableStream
+  TransformStream = globalThis.TransformStream
 } else if (platform === PLATFORM.NODE) {
-  // @ts-ignore JSR no reconoce 'require' al publicar
+  // @ts-ignore JSR does not recognize 'require' when publishing
   const streamsModule = require("node:stream/web")
 
   //@ts-ignore Cross Runtime

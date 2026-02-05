@@ -1,92 +1,265 @@
-![header](https://github.com/user-attachments/assets/97963ef5-68a6-449e-ad16-081a9bdc9103)
+<div align="center">
 
-# Streamfu [![JSR Score](https://jsr.io/badges/@sgmonda/streamfu/score)](https://jsr.io/@sgmonda/streamfu)
+<img width="150" height="100" alt="header" src="https://github.com/user-attachments/assets/bbbff16f-cd63-45db-890b-170aba10f643" />
 
-Pure utilities for working with streams in JS/TS in a functional way, making your code readable, predictable, maintainable and testable.
+# streamfu
 
-Developer experience is a key point in this package, making simple the complex.
+### Streams should feel like arrays. Now they do.
 
-## Introduction
+[![JSR Score](https://jsr.io/badges/@sgmonda/streamfu/score)](https://jsr.io/@sgmonda/streamfu)
+[![JSR Version](https://jsr.io/badges/@sgmonda/streamfu)](https://jsr.io/@sgmonda/streamfu)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![100% Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)]()
 
-Streams are async collections of data, conceptually similar to arrays, but very different in practice:
+Functional stream utilities for JavaScript & TypeScript
 
-- They can be infinite
-- They can be asynchronous
-- They are not fully loaded in memory
+[Getting Started](#getting-started) · [API](#api-reference) · [Why streamfu?](#why-streamfu) · [Contributing](#contributing)
 
-For these reasons, streams are a powerful tool for working with async and huge data, but **they can be hard to work with**.
+</div>
 
-This package provides a set of utilities to work with streams in a functional way, making it easier to work with them like you would with arrays.
+---
 
-With **[functional way](https://en.wikipedia.org/wiki/Functional_programming)**, we're just talking about working with data following a [declarative](https://en.wikipedia.org/wiki/Declarative_programming) and [pure](https://en.wikipedia.org/wiki/Pure_function) approach. This will make your code more readable, predictable, maintainable, and testable.
+## Why streamfu?
 
-This also ensure you can enjoy `streamfu` in a wide range of environments (like Node.js, Deno, or the browser) and using your favorite paradigm.
+Streams are one of the most powerful primitives in JavaScript. They handle infinite data, backpressure, and async flows — things arrays simply can't do.
 
-### Consuming vs non-consuming operations
+But the standard API makes you pay for that power with **boilerplate, footguns, and unreadable code**.
 
-Streams can be consumed only once. This means that, if you consume a stream, you can't consume it again. This is a fundamental difference with arrays.
+### The problem: Native streams are painful
 
-[`streamfu`](https://jsr.io/@sgmonda/streamfu) provides a set of utilities that allows you to work with streams in a functional way, without consuming them. Take a look at `map()`, `flat()`, `zip()`... They all return a new stream, without consuming the original one.
-
-But there are some operations that consume the stream, like `reduce()`, `some()` or `indexOf()`. These operations are marked as such in the documentation.
+Here's a real scenario — read a stream of numbers, keep only even ones, double them, and collect the results:
 
 ```typescript
-// This is consuming the stream
-const sumValue = await reduce(stream, (acc, value) => acc + value, 0)
+// ❌ Native Web Streams — imperative, verbose, error-prone
+const reader = readable.getReader()
+const results: number[] = []
 
-// This is not consuming the stream
-const mappedStream = map(stream, (value) => value * 2)
+while (true) {
+  const { done, value } = await reader.read()
+  if (done) break
+  if (value % 2 === 0) {
+    results.push(value * 2)
+  }
+}
+
+reader.releaseLock()
 ```
 
-Just be sure to **understand when you're consuming a stream** and when you're not, to avoid unexpected behaviors. Here's a trick: if the operation returns a new stream, it's not consuming the input one. If it returns a promised value, then it's consuming it.
+Manual reader management. Mutable state. An infinite `while (true)` loop. And this is the **simple** case.
 
-#### Operations comparison table
+Need to split a stream? Native `tee()` only gives you two copies. Want to merge streams? Build your own. Want to zip? Good luck.
 
-| Operation    | Consumes | Returns                   | Description                         |
-| ------------ | :------: | ------------------------- | ----------------------------------- |
-| `branch()`   |   no*    | `ReadableStream<T>[]`     | Clone stream into multiple branches |
-| `concat()`   |    no    | `ReadableStream<T>`       | Concatenate multiple streams        |
-| `filter()`   |    no    | `ReadableStream<T>`       | Filter chunks by predicate          |
-| `flat()`     |    no    | `ReadableStream<T>`       | Flatten nested arrays               |
-| `flatMap()`  |    no    | `ReadableStream<U>`       | Map + flatten in one step           |
-| `map()`      |    no    | `ReadableStream<Tout>`    | Transform each chunk                |
-| `slice()`    |    no    | `ReadableStream<T>`       | Extract portion of stream           |
-| `splice()`   |    no    | `ReadableStream<T>`       | Replace items at index              |
-| `zip()`      |    no    | `ReadableStream<[...]>`   | Combine streams into tuples         |
-| `at()`       |   yes    | `Promise<T \| undefined>` | Get value at index                  |
-| `every()`    |   yes    | `Promise<boolean>`        | Test if all chunks pass predicate   |
-| `forEach()`  |   yes    | `Promise<void>`           | Execute function for each chunk     |
-| `includes()` |   yes    | `Promise<boolean>`        | Check if value exists               |
-| `indexOf()`  |   yes    | `Promise<number>`         | Find index of value                 |
-| `list()`     |   yes    | `Promise<T[]>`            | Collect all chunks into array       |
-| `reduce()`   |   yes    | `Promise<Taccum>`         | Reduce to single value              |
-| `some()`     |   yes    | `Promise<boolean>`        | Test if any chunk passes predicate  |
+```typescript
+// ❌ Native — splitting a stream into 4 branches
+const [a, rest1] = stream.tee()
+const [b, rest2] = rest1.tee()
+const [c, d] = rest2.tee()
+// Hope you got the order right...
+```
 
-_\* `branch()` locks the original stream but doesn't consume it._
+### The solution: streamfu
 
-## Usage
+```typescript
+// ✅ streamfu — declarative, composable, readable
+import { createReadable, filter, list, map, pipe } from "@sgmonda/streamfu"
 
-This package provides a simple and functional way to work with streams in JS/TS. To use it, you can install it from your favorite package manager.
+const readable = createReadable([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
-<details>
-  <summary>See installing commands for NPM, Deno, Bun...</summary>
+const stream = pipe(
+  readable,
+  (r) => filter(r, (n) => n % 2 === 0),
+  (r) => map(r, (n) => n * 2),
+)
+const results = await list(stream)
+```
 
-- npm: `npx jsr add @sgmonda/streamfu`
-- yarn: `yarn dlx jsr add @sgmonda/streamfu`
-- pnpm: `pnpm dlx jsr add @sgmonda/streamfu`
-- deno: `deno add jsr:@sgmonda/streamfu`
-- bun: `bunx jsr add @sgmonda/streamfu`
+Same result. No manual readers. No mutable state. No `while (true)`. Just pure transformations.
+
+```typescript
+// ✅ streamfu — branch into any number of copies
+import { branch } from "@sgmonda/streamfu"
+
+const [a, b, c, d] = branch(stream, 4)
+```
+
+### Side-by-side comparison
+
+| Task                  | Native Streams                            | streamfu                   |
+| --------------------- | ----------------------------------------- | -------------------------- |
+| Transform each chunk  | `pipeThrough(new TransformStream({...}))` | `map(stream, fn)`          |
+| Filter chunks         | Manual reader loop + condition            | `filter(stream, fn)`       |
+| Reduce to value       | Manual reader loop + accumulator          | `reduce(stream, fn, init)` |
+| Combine streams       | Manual reader orchestration               | `zip(s1, s2, s3)`          |
+| Concatenate streams   | Complex async pull logic                  | `concat(s1, s2, s3)`       |
+| Split stream          | Nested `.tee()` chains                    | `branch(stream, n)`        |
+| Get element at index  | Manual counter + reader                   | `at(stream, i)`            |
+| Check if value exists | Manual loop + early exit                  | `includes(stream, val)`    |
+| Chain operations      | Deeply nested `pipeThrough`               | `pipe(stream, f1, f2, f3)` |
+
+**If you know `Array.prototype`, you already know streamfu.**
+
+---
+
+## Getting Started
+
+### Install
+
+<details open>
+  <summary><strong>npm / yarn / pnpm / bun</strong></summary>
+
+```bash
+npx jsr add @sgmonda/streamfu     # npm
+yarn dlx jsr add @sgmonda/streamfu # yarn
+pnpm dlx jsr add @sgmonda/streamfu # pnpm
+bunx jsr add @sgmonda/streamfu     # bun
+```
 
 </details>
 
-Then, just import the whole module or some of its components from your code:
+<details>
+  <summary><strong>Deno</strong></summary>
 
-```typescript
-import * as streamfu from "@sgmonda/streamfu"
-import { map, reduce } from "@sgmonda/streamfu"
+```bash
+deno add jsr:@sgmonda/streamfu
 ```
 
-Now you're ready to use the utilities in your code!
+</details>
+
+### Quick start
+
+```typescript
+import { createReadable, filter, map, pipe, reduce } from "@sgmonda/streamfu"
+
+// Create a stream from any iterable
+const numbers = createReadable([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+
+// Compose transformations with pipe
+const stream = pipe(
+  numbers,
+  (r) => filter(r, (n) => n % 2 === 0), // keep even: 2, 4, 6, 8, 10
+  (r) => map(r, (n) => n * 2), // double:   4, 8, 12, 16, 20
+)
+const sumOfDoubledEvens = await reduce(stream, (a, b) => a + b, 0) // sum: 60
+
+console.log(sumOfDoubledEvens) // 60
+```
+
+---
+
+## API Reference
+
+### Stream creation
+
+| Function                   | Description                                                           |
+| -------------------------- | --------------------------------------------------------------------- |
+| `createReadable(iterable)` | Create a stream from arrays, generators, sets, strings — any iterable |
+| `createWritable(fn)`       | Create a writable stream from a callback function                     |
+| `range(min, max, step?)`   | Generate a stream of numbers in a range                               |
+| `words(chars, length)`     | Generate a stream of random strings                                   |
+
+### Transformations (non-consuming)
+
+These return a **new stream** — the original is not consumed.
+
+| Function                                 | Description                                                  |
+| ---------------------------------------- | ------------------------------------------------------------ |
+| `map(stream, ...fns)`                    | Transform each chunk (supports chaining multiple transforms) |
+| `filter(stream, fn)`                     | Keep only chunks matching a predicate                        |
+| `flat(stream, depth?)`                   | Flatten a stream of arrays                                   |
+| `flatMap(stream, fn)`                    | Map + flatten in one step                                    |
+| `slice(stream, start, end?)`             | Extract a portion of the stream                              |
+| `splice(stream, start, count, ...items)` | Remove/insert chunks at a position                           |
+| `concat(...streams)`                     | Concatenate multiple streams sequentially                    |
+| `zip(...streams)`                        | Combine streams into a stream of tuples                      |
+| `pipe(stream, ...fns)`                   | Chain multiple stream operations                             |
+| `branch(stream, n)`                      | Split a stream into `n` independent copies                   |
+
+### Consumers (consuming)
+
+These **consume the stream** — it cannot be reused afterward.
+
+| Function                   | Description                           |
+| -------------------------- | ------------------------------------- |
+| `reduce(stream, fn, init)` | Reduce to a single value              |
+| `list(stream)`             | Collect all chunks into an array      |
+| `some(stream, fn)`         | Check if any chunk matches            |
+| `every(stream, fn)`        | Check if all chunks match             |
+| `forEach(stream, fn)`      | Execute a function for each chunk     |
+| `includes(stream, value)`  | Check if a value exists in the stream |
+| `at(stream, index)`        | Get the chunk at a specific index     |
+| `indexOf(stream, value)`   | Find the index of a value             |
+
+### Consuming vs non-consuming
+
+> **Rule of thumb:** If it returns a `ReadableStream`, it's non-consuming. If it returns a `Promise`, it consumes the stream.
+
+Need to consume a stream multiple times? Use `branch()` first:
+
+```typescript
+const [forSum, forCount] = branch(numbers, 2)
+
+const sum = await reduce(forSum, (a, b) => a + b, 0)
+const count = await reduce(forCount, (acc) => acc + 1, 0)
+```
+
+---
+
+## Real-world examples
+
+### Process a large CSV stream
+
+```typescript
+import { createWritable, filter, map, pipe } from "@sgmonda/streamfu"
+
+const output = pipe(
+  csvStream,
+  (r) => map(r, (line) => line.split(",")),
+  (r) => filter(r, (cols) => cols[2] !== "inactive"),
+  (r) => map(r, (cols) => ({ name: cols[0], email: cols[1], status: cols[2] })),
+)
+
+await output.pipeTo(createWritable((user) => db.insert(user)))
+```
+
+### Generate and transform numeric ranges
+
+```typescript
+import { filter, list, map, pipe, range } from "@sgmonda/streamfu"
+
+const stream = pipe(
+  range(2, 1000),
+  (r) => filter(r, isPrime),
+  (r) => map(r, (n) => n ** 2),
+)
+const primeSquares = await list(stream)
+```
+
+### Zip parallel data sources
+
+```typescript
+import { list, map, zip } from "@sgmonda/streamfu"
+
+const paired = zip(namesStream, scoresStream)
+// Stream of [name, score] tuples
+
+const stream = pipe(
+  paired,
+  (r) => map(r, ([name, score]) => `${name}: ${score}`),
+)
+const leaderboard = await list(stream)
+```
+
+---
+
+## Design principles
+
+- **Functional & pure** — No side effects, no mutations. Every operation returns a new stream.
+- **Familiar API** — Mirrors `Array.prototype` methods. Zero learning curve.
+- **Universal** — Built on the [Web Streams API](https://developer.mozilla.org/en-US/docs/Web/API/Streams_API). Works in Node.js, Deno, Bun, and browsers.
+- **Type-safe** — Full TypeScript support with precise generics.
+- **Tested** — 100% code coverage. Every function, every edge case.
+
+---
 
 ### Error handling with `forEach()`
 
@@ -122,21 +295,26 @@ This works equally well with other consuming operations like `reduce()`, `list()
 
 ## Contributing
 
-This package is open to contributions. If you want to contribute, just fork the repository, make your changes, and submit a PR. Remember to include tests and run the following:
+Contributions welcome! Fork the repo, make your changes, and submit a PR.
 
-```
+```bash
 deno task test
 ```
 
-Some key points to consider:
+**Requirements:**
 
-- Commits must follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
-- The code should be well tested. Only a 100% coverage will pass our checks.
-- The code should be well documented. Every exported function should have a complete JSDoc comment.
+- Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+- Maintain 100% test coverage
+- Include JSDoc comments on all exports
 
 ### Publishing
 
-This package is published to JSR by mean of GitHub CI, so a new version is published automatically when:
+Published to [JSR](https://jsr.io/@sgmonda/streamfu) automatically via GitHub CI when `version` changes in `deno.json` on `main`.
 
-- A new commit is pushed to the `main` branch
-- `version` changes in `deno.json`
+---
+
+<div align="center">
+
+**MIT License** · Made with care by [@sgmonda](https://github.com/sgmonda) and contributors
+
+</div>
