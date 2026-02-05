@@ -55,6 +55,7 @@ Just be sure to **understand when you're consuming a stream** and when you're no
 | `zip()`      |    no    | `ReadableStream<[...]>`   | Combine streams into tuples         |
 | `at()`       |   yes    | `Promise<T \| undefined>` | Get value at index                  |
 | `every()`    |   yes    | `Promise<boolean>`        | Test if all chunks pass predicate   |
+| `forEach()`  |   yes    | `Promise<void>`           | Execute function for each chunk     |
 | `includes()` |   yes    | `Promise<boolean>`        | Check if value exists               |
 | `indexOf()`  |   yes    | `Promise<number>`         | Find index of value                 |
 | `list()`     |   yes    | `Promise<T[]>`            | Collect all chunks into array       |
@@ -86,6 +87,38 @@ import { map, reduce } from "@sgmonda/streamfu"
 ```
 
 Now you're ready to use the utilities in your code!
+
+### Error handling with `forEach()`
+
+One of the trickiest parts of working with streams is error handling. The traditional approach relies on listening to events, which splits your logic across multiple callbacks and makes the control flow hard to follow:
+
+```typescript
+// ❌ Event-based error handling: scattered logic, easy to forget a listener
+stream.on("data", (chunk) => {/* process chunk */})
+stream.on("error", (err) => {/* handle error */})
+stream.on("end", () => {/* cleanup */})
+```
+
+This pattern has several problems:
+
+- Error handling is **disconnected** from the processing logic
+- Forgetting the `error` listener can cause **unhandled exceptions** that crash your process
+- Coordinating `end` and `error` to know when the stream is truly done requires **extra state**
+- It doesn't compose well with `async/await` code
+
+With `forEach()`, the stream is consumed and any error (either from the stream itself or from your callback) rejects the returned promise. This means you can use a standard `try/catch` block:
+
+```typescript
+// ✅ Promise-based error handling: linear, composable, hard to miss
+try {
+  await forEach(stream, () => {})
+  console.log("Done")
+} catch (err) {
+  console.error("Something failed:", err)
+}
+```
+
+This works equally well with other consuming operations like `reduce()`, `list()` or `every()`, since they all return promises. `forEach()` is especially handy when you only care about side effects (logging, writing to a file, sending data) and don't need a return value.
 
 ## Contributing
 
