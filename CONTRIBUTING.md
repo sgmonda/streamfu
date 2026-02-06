@@ -53,7 +53,7 @@ Run `deno task lint` to format and lint your code before committing.
 
 ```typescript
 const TEST_CASES = [
-  { title: "description of case", conditions: { /* input */ }, expected: { /* output */ } },
+  { title: "description of case", conditions: {/* input */}, expected: {/* output */} },
 ]
 
 Deno.test("functionName()", async ({ step }) => {
