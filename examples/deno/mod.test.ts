@@ -1,5 +1,5 @@
 import * as streamfu from "../../mod.ts"
-import { assert, assertEquals } from "asserts"
+import { assert, assertEquals, assertRejects } from "asserts"
 
 Deno.test("createReadable()", async ({ step }) => {
   await step("is a function", () => {
@@ -76,7 +76,11 @@ Deno.test("reduce()", async ({ step }) => {
 
   await step("reduces chunks to a single value", async () => {
     const readable = streamfu.createReadable([1, 2, 3])
-    const result = await streamfu.reduce(readable, (acc, chunk) => acc + chunk, 0)
+    const result = await streamfu.reduce(
+      readable,
+      (acc, chunk) => acc + chunk,
+      0,
+    )
     assertEquals(result, 6)
   })
 })
@@ -88,7 +92,10 @@ Deno.test("filter()", async ({ step }) => {
 
   await step("filters chunks", async () => {
     const readable = streamfu.createReadable([1, 2, 3])
-    const filtered = streamfu.filter(readable, (chunk: number) => chunk % 2 === 0)
+    const filtered = streamfu.filter(
+      readable,
+      (chunk: number) => chunk % 2 === 0,
+    )
     const reader = filtered.getReader()
     const items = [
       (await reader.read()).value,
@@ -96,5 +103,33 @@ Deno.test("filter()", async ({ step }) => {
       (await reader.read()).value,
     ]
     assertEquals(items, [2, undefined, undefined])
+  })
+})
+
+Deno.test("onError()", async ({ step }) => {
+  await step("maps chunks", async () => {
+    const stream1 = streamfu.createReadable([
+      1,
+      2,
+      3,
+      5.552222,
+      "hello" as unknown as number,
+    ])
+    const stream2 = streamfu.map(
+      stream1,
+      (chunk) => chunk.toFixed(2),
+      (chunk) => Number(chunk) / 2,
+    )
+    const stream3 = streamfu.slice(stream2, 1)
+    const stream4 = streamfu.map(
+      stream3,
+      (chunk) => chunk * 2,
+      (piece) => piece.toFixed(2),
+    )
+    await assertRejects(
+      () => streamfu.list(stream4),
+      TypeError,
+      "chunk.toFixed is not a function",
+    )
   })
 })

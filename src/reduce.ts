@@ -25,11 +25,11 @@ export const reduce = <Tin = unknown, Taccum = unknown>(
       if (done) return resolve(acc)
       try {
         acc = await fn(acc, value, index++)
-        reader.read().then(process)
+        reader.read().then(process).catch(reject)
       } catch (err: unknown) {
         reject(err)
         return
       }
-    })
+    }).catch(reject)
   })
 }

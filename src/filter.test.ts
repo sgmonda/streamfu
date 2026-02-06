@@ -1,4 +1,4 @@
-import { assertEquals } from "asserts/equals"
+import { assertEquals, assertRejects } from "asserts"
 import { createReadable } from "./createReadable.ts"
 import { filter } from "./filter.ts"
 import { list } from "./list.ts"
@@ -25,6 +25,30 @@ const TEST_CASES = [{
   },
   expected: [{ a: 2 }, { a: 3 }, { a: 4 }, { a: 5 }],
 }]
+
+Deno.test("filter() error propagation", async ({ step }) => {
+  await step("sync error in predicate rejects the consuming promise", async () => {
+    const readable = createReadable([1, 2, "hello" as unknown as number])
+    const filtered = filter(readable, (chunk) => (chunk as number).toFixed(2) !== "0.00")
+    await assertRejects(
+      () => list(filtered),
+      TypeError,
+    )
+  })
+
+  await step("async error in predicate rejects the consuming promise", async () => {
+    const readable = createReadable([1, 2, 3])
+    const filtered = filter(readable, (chunk) => {
+      if (chunk === 3) throw new Error("bad predicate")
+      return chunk > 0
+    })
+    await assertRejects(
+      () => list(filtered),
+      Error,
+      "bad predicate",
+    )
+  })
+})
 
 Deno.test("filter()", async ({ step }) => {
   for (const testCase of TEST_CASES) await runTest(testCase)

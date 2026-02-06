@@ -1,4 +1,4 @@
-import { assertEquals } from "asserts"
+import { assertEquals, assertRejects } from "asserts"
 import { map } from "./map.ts"
 import { createReadable } from "./createReadable.ts"
 import { list } from "./list.ts"
@@ -106,6 +106,43 @@ Deno.test("map() type inference", async ({ step }) => {
       (num) => num > 3,
     )
     assertEquals(await list(result), [false, true, true])
+  })
+})
+
+Deno.test("map() error propagation", async ({ step }) => {
+  await step("sync error in transformer rejects the consuming promise", async () => {
+    const readable = createReadable([1, 2, "hello" as unknown as number])
+    const mapped = map(readable, (chunk) => chunk.toFixed(2))
+    await assertRejects(
+      () => list(mapped),
+      TypeError,
+    )
+  })
+
+  await step("async error in transformer rejects the consuming promise", async () => {
+    const readable = createReadable([1, 2, 3])
+    const mapped = map(readable, (chunk) => {
+      if (chunk === 3) throw new Error("bad chunk")
+      return chunk * 2
+    })
+    await assertRejects(
+      () => list(mapped),
+      Error,
+      "bad chunk",
+    )
+  })
+
+  await step("error in chained transformers rejects the consuming promise", async () => {
+    const readable = createReadable([1, 2, "hello" as unknown as number])
+    const mapped = map(
+      readable,
+      (chunk) => chunk.toFixed(2),
+      (chunk) => Number(chunk) / 2,
+    )
+    await assertRejects(
+      () => list(mapped),
+      TypeError,
+    )
   })
 })
 

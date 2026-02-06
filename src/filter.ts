@@ -12,12 +12,15 @@ export const filter = <T>(
   readable: ReadableStream<T>,
   fn: (chunk: T) => boolean | Promise<boolean>,
 ): ReadableStream<T> => {
-  const transform = new TransformStream<T, T>({
+  const ts = new TransformStream<T, T>({
     transform: async (chunk, controller) => {
-      if (await fn(chunk)) {
-        controller.enqueue(chunk)
+      try {
+        if (await fn(chunk)) controller.enqueue(chunk)
+      } catch (e) {
+        controller.error(e)
       }
     },
   })
-  return readable.pipeThrough(transform)
+  readable.pipeTo(ts.writable).catch(() => {})
+  return ts.readable
 }

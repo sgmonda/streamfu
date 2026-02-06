@@ -261,7 +261,7 @@ const leaderboard = await list(stream)
 
 ---
 
-### Error handling with `forEach()`
+### Error handling
 
 One of the trickiest parts of working with streams is error handling. The traditional approach relies on listening to events, which splits your logic across multiple callbacks and makes the control flow hard to follow:
 
@@ -279,19 +279,24 @@ This pattern has several problems:
 - Coordinating `end` and `error` to know when the stream is truly done requires **extra state**
 - It doesn't compose well with `async/await` code
 
-With `forEach()`, the stream is consumed and any error (either from the stream itself or from your callback) rejects the returned promise. This means you can use a standard `try/catch` block:
+In streamfu, errors propagate automatically through chained operations. If a `map()` transformer or a `filter()` predicate throws, the error bubbles up and rejects the promise returned by any consuming operation (`list()`, `reduce()`, `every()`, etc.). This means you can use a standard `try/catch` block:
 
 ```typescript
-// ✅ Promise-based error handling: linear, composable, hard to miss
+// ✅ Errors propagate through the entire chain
+const stream = pipe(
+  createReadable(data),
+  (r) => map(r, transformFn), // if this throws...
+  (r) => filter(r, predicateFn),
+)
+
 try {
-  await forEach(stream, () => {})
-  console.log("Done")
+  const results = await list(stream) // ...the error rejects here
 } catch (err) {
   console.error("Something failed:", err)
 }
 ```
 
-This works equally well with other consuming operations like `reduce()`, `list()` or `every()`, since they all return promises. `forEach()` is especially handy when you only care about side effects (logging, writing to a file, sending data) and don't need a return value.
+No special error listeners, no extra plumbing. Errors flow naturally through `map()`, `filter()`, and any other chained transformation, all the way to whichever consumer ends the pipeline.
 
 ## Contributing
 

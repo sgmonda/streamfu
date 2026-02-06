@@ -103,12 +103,16 @@ export function map(readable: ReadableStream<any>, ...transformers: ITransformer
     }
     return value
   }
-  return readable.pipeThrough(
-    new TransformStream({
-      transform: async (chunk, controller) => {
+  const ts = new TransformStream({
+    transform: async (chunk: unknown, controller: TransformStreamDefaultController) => {
+      try {
         const value = await applyTransformers(chunk)
         controller.enqueue(value)
-      },
-    }),
-  )
+      } catch (e) {
+        controller.error(e)
+      }
+    },
+  })
+  readable.pipeTo(ts.writable).catch(() => {})
+  return ts.readable
 }
