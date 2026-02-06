@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  {% include head.html %}
+  <body>
+    {% include nav.html %}
+
+    <main class="container">
+      <article class="content">
+        {{ content }}
+      </article>
+      <div class="edit-link">
+        <a href="https://github.com/sgmonda/streamfu/edit/main/docs/{{ page.path }}" target="_blank" rel="noopener">
+          Edit this page on GitHub
+        </a>
+      </div>
+    </main>
+
+    {% include footer.html %}
+
+    <script>
+      ;(function () {
+        var theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+        var saved = localStorage.getItem("streamfu-theme")
+        if (saved) theme = saved
+        document.documentElement.setAttribute("data-theme", theme)
+
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function (e) {
+          if (!localStorage.getItem("streamfu-theme")) {
+            document.documentElement.setAttribute("data-theme", e.matches ? "dark" : "light")
+          }
+        })
+      })()
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var toggle = document.querySelector(".theme-toggle")
+        if (toggle) {
+          toggle.addEventListener("click", function () {
+            var current = document.documentElement.getAttribute("data-theme")
+            var next = current === "dark" ? "light" : "dark"
+            document.documentElement.setAttribute("data-theme", next)
+            localStorage.setItem("streamfu-theme", next)
+          })
+        }
+
+        var hamburger = document.querySelector(".nav-hamburger")
+        var navLinks = document.querySelector(".nav-links")
+        if (hamburger && navLinks) {
+          hamburger.addEventListener("click", function () {
+            navLinks.classList.toggle("open")
+            hamburger.classList.toggle("open")
+          })
+        }
+
+        var dropdownToggle = document.querySelector(".dropdown-toggle")
+        var dropdown = document.querySelector(".dropdown")
+        if (dropdownToggle && dropdown) {
+          dropdownToggle.addEventListener("click", function (e) {
+            if (window.innerWidth <= 768) {
+              e.preventDefault()
+              dropdown.classList.toggle("open")
+            }
+          })
+        }
+      })
+    </script>
+  </body>
+</html>

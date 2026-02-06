@@ -1,7 +1,7 @@
 {
   "name": "@sgmonda/streamfu",
   "description": "Functional programming utilities for working with streams in JS/TS",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "license": "MIT",
   "exports": "./mod.ts",
   "imports": {
@@ -27,7 +27,8 @@
     "indentWidth": 2,
     "semiColons": false,
     "singleQuote": false,
-    "proseWrap": "preserve"
+    "proseWrap": "preserve",
+    "exclude": ["docs/"]
   },
   "lint": { "rules": { "tags": ["fresh", "recommended"] } }
 }

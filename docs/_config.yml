@@ -1,0 +1,36 @@
+title: streamfu
+description: Functional stream utilities for JavaScript & TypeScript
+url: https://sgmonda.github.io
+baseurl: /streamfu
+repository: sgmonda/streamfu
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+main_nav:
+  - title: Getting Started
+    url: /getting-started
+  - title: API
+    url: /api/
+  - title: Examples
+    url: /examples
+  - title: Principles
+    url: /principles
+
+api_nav:
+  - title: Overview
+    url: /api/
+  - title: Creation
+    url: /api/creation
+  - title: Transformations
+    url: /api/transformations
+  - title: Consumers
+    url: /api/consumers
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
