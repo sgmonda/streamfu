@@ -68,6 +68,47 @@ const TEST_CASES = [{
   expected: [1, "2", 3, undefined, { four: 4 }, [5]],
 }]
 
+Deno.test("map() type inference", async ({ step }) => {
+  await step("single transformer: infers input from stream and output from return type", async () => {
+    const result: ReadableStream<string> = map(createReadable([1, 2, 3]), (chunk) => chunk.toFixed(2))
+    // @ts-expect-error: ReadableStream<string> is not assignable to ReadableStream<number>
+    const _negative: ReadableStream<number> = map(createReadable([1, 2, 3]), (chunk) => chunk.toFixed(2))
+    assertEquals(await list(result), ["1.00", "2.00", "3.00"])
+  })
+
+  await step("two transformers: second input inferred from first output", async () => {
+    const result: ReadableStream<string> = map(
+      createReadable([1, 2, 3]),
+      (chunk) => chunk * 2,
+      (piece) => piece.toFixed(2),
+    )
+    // @ts-expect-error: ReadableStream<string> is not assignable to ReadableStream<number>
+    const _negative: ReadableStream<number> = map(
+      createReadable([1, 2, 3]),
+      (chunk) => chunk * 2,
+      (piece) => piece.toFixed(2),
+    )
+    assertEquals(await list(result), ["2.00", "4.00", "6.00"])
+  })
+
+  await step("three transformers: full chain inference across types", async () => {
+    const result: ReadableStream<boolean> = map(
+      createReadable(["1", "2", "3"]),
+      (chunk) => parseInt(chunk, 10),
+      (num) => num * 2.5,
+      (num) => num > 3,
+    )
+    // @ts-expect-error: ReadableStream<boolean> is not assignable to ReadableStream<string>
+    const _negative: ReadableStream<string> = map(
+      createReadable(["1", "2", "3"]),
+      (chunk) => parseInt(chunk, 10),
+      (num) => num * 2.5,
+      (num) => num > 3,
+    )
+    assertEquals(await list(result), [false, true, true])
+  })
+})
+
 Deno.test("map()", async ({ step }) => {
   for (const testCase of TEST_CASES) await runTest(testCase)
 
