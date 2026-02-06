@@ -106,7 +106,7 @@ Deno.test("filter()", async ({ step }) => {
   })
 })
 
-Deno.test("onError()", async ({ step }) => {
+Deno.test("Error handling", async ({ step }) => {
   await step("maps chunks", async () => {
     const stream1 = streamfu.createReadable([
       1,

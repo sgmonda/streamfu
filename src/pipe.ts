@@ -1,31 +1,61 @@
+/**
+ * A pipe function that takes a readable stream and returns a new readable stream with transformed chunks.
+ *
+ * @template Tin The input stream chunk type
+ * @template Tout The output stream chunk type
+ */
 type IPipeFn<Tin, Tout> = (readable: ReadableStream<Tin>) => ReadableStream<Tout>
 
 /**
- * Passes a readable stream through a series of functions, each taking the previous output as input,
- * and returning a new readable stream for the next. Types are inferred through the chain: each
- * function's input is inferred from the previous function's output.
+ * Passes a readable stream through 1 transform function.
+ * Types are inferred through the chain.
  *
- * Type inference is supported for up to 9 chained functions, which covers virtually all practical
- * use cases. Beyond that, types fall back to `any` (a TypeScript limitation shared by RxJS, fp-ts, etc.).
- *
- * @param readable A readable stream to be passed to the first function
- * @param fns A list of functions, each taking a readable stream and returning a new readable stream
- * @returns The last readable stream after applying all transformations
- *
- * @example const result = pipe(readable, r => filter(r, num => num % 2 === 0), r => map(r, num => num.toString()))
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @returns A readable stream of B chunks
  */
 export function pipe<A, B>(readable: ReadableStream<A>, fn1: IPipeFn<A, B>): ReadableStream<B>
+/**
+ * Passes a readable stream through 2 chained transform functions.
+ * Types are inferred through the chain.
+ *
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @param fn2 Transform from B to C
+ * @returns A readable stream of C chunks
+ */
 export function pipe<A, B, C>(
   readable: ReadableStream<A>,
   fn1: IPipeFn<A, B>,
   fn2: IPipeFn<B, C>,
 ): ReadableStream<C>
+/**
+ * Passes a readable stream through 3 chained transform functions.
+ * Types are inferred through the chain.
+ *
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @param fn2 Transform from B to C
+ * @param fn3 Transform from C to D
+ * @returns A readable stream of D chunks
+ */
 export function pipe<A, B, C, D>(
   readable: ReadableStream<A>,
   fn1: IPipeFn<A, B>,
   fn2: IPipeFn<B, C>,
   fn3: IPipeFn<C, D>,
 ): ReadableStream<D>
+/**
+ * Passes a readable stream through 4 chained transform functions.
+ * Types are inferred through the chain.
+ *
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @param fn2 Transform from B to C
+ * @param fn3 Transform from C to D
+ * @param fn4 Transform from D to E
+ * @returns A readable stream of E chunks
+ */
 export function pipe<A, B, C, D, E>(
   readable: ReadableStream<A>,
   fn1: IPipeFn<A, B>,
@@ -33,6 +63,18 @@ export function pipe<A, B, C, D, E>(
   fn3: IPipeFn<C, D>,
   fn4: IPipeFn<D, E>,
 ): ReadableStream<E>
+/**
+ * Passes a readable stream through 5 chained transform functions.
+ * Types are inferred through the chain.
+ *
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @param fn2 Transform from B to C
+ * @param fn3 Transform from C to D
+ * @param fn4 Transform from D to E
+ * @param fn5 Transform from E to F
+ * @returns A readable stream of F chunks
+ */
 export function pipe<A, B, C, D, E, F>(
   readable: ReadableStream<A>,
   fn1: IPipeFn<A, B>,
@@ -41,6 +83,19 @@ export function pipe<A, B, C, D, E, F>(
   fn4: IPipeFn<D, E>,
   fn5: IPipeFn<E, F>,
 ): ReadableStream<F>
+/**
+ * Passes a readable stream through 6 chained transform functions.
+ * Types are inferred through the chain.
+ *
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @param fn2 Transform from B to C
+ * @param fn3 Transform from C to D
+ * @param fn4 Transform from D to E
+ * @param fn5 Transform from E to F
+ * @param fn6 Transform from F to G
+ * @returns A readable stream of G chunks
+ */
 export function pipe<A, B, C, D, E, F, G>(
   readable: ReadableStream<A>,
   fn1: IPipeFn<A, B>,
@@ -50,6 +105,20 @@ export function pipe<A, B, C, D, E, F, G>(
   fn5: IPipeFn<E, F>,
   fn6: IPipeFn<F, G>,
 ): ReadableStream<G>
+/**
+ * Passes a readable stream through 7 chained transform functions.
+ * Types are inferred through the chain.
+ *
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @param fn2 Transform from B to C
+ * @param fn3 Transform from C to D
+ * @param fn4 Transform from D to E
+ * @param fn5 Transform from E to F
+ * @param fn6 Transform from F to G
+ * @param fn7 Transform from G to H
+ * @returns A readable stream of H chunks
+ */
 export function pipe<A, B, C, D, E, F, G, H>(
   readable: ReadableStream<A>,
   fn1: IPipeFn<A, B>,
@@ -60,6 +129,21 @@ export function pipe<A, B, C, D, E, F, G, H>(
   fn6: IPipeFn<F, G>,
   fn7: IPipeFn<G, H>,
 ): ReadableStream<H>
+/**
+ * Passes a readable stream through 8 chained transform functions.
+ * Types are inferred through the chain.
+ *
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @param fn2 Transform from B to C
+ * @param fn3 Transform from C to D
+ * @param fn4 Transform from D to E
+ * @param fn5 Transform from E to F
+ * @param fn6 Transform from F to G
+ * @param fn7 Transform from G to H
+ * @param fn8 Transform from H to I
+ * @returns A readable stream of I chunks
+ */
 export function pipe<A, B, C, D, E, F, G, H, I>(
   readable: ReadableStream<A>,
   fn1: IPipeFn<A, B>,
@@ -71,6 +155,22 @@ export function pipe<A, B, C, D, E, F, G, H, I>(
   fn7: IPipeFn<G, H>,
   fn8: IPipeFn<H, I>,
 ): ReadableStream<I>
+/**
+ * Passes a readable stream through 9 chained transform functions.
+ * Types are inferred through the chain.
+ *
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @param fn2 Transform from B to C
+ * @param fn3 Transform from C to D
+ * @param fn4 Transform from D to E
+ * @param fn5 Transform from E to F
+ * @param fn6 Transform from F to G
+ * @param fn7 Transform from G to H
+ * @param fn8 Transform from H to I
+ * @param fn9 Transform from I to J
+ * @returns A readable stream of J chunks
+ */
 export function pipe<A, B, C, D, E, F, G, H, I, J>(
   readable: ReadableStream<A>,
   fn1: IPipeFn<A, B>,

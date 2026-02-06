@@ -1,38 +1,63 @@
 import { TransformStream } from "./system/stream.ts"
 
+/**
+ * A transform function that takes a chunk and its index, and returns a transformed value (sync or async).
+ *
+ * @template Tin The input chunk type
+ * @template Tout The output chunk type
+ */
 type ITransformer<Tin, Tout> = (chunk: Tin, i: number) => Tout | Promise<Tout>
 
 /**
- * Creates a new stream by applying one or more transform functions to each chunk of the input stream.
- * When many functions are provided, they are applied in order. Types are inferred through the chain:
- * the first transformer infers its input from the stream, and each subsequent transformer infers its
- * input from the previous transformer's output.
- *
- * Type inference is supported for up to 9 chained transformers, which covers virtually all practical
- * use cases. Beyond that, types fall back to `any` (a TypeScript limitation shared by RxJS, fp-ts, etc.).
+ * Applies 1 transform function to each chunk of the input stream.
+ * Types are inferred through the chain.
  *
  * @param readable The input stream
- * @param transformers One or more transform functions to apply to the input chunks
- * @returns A readable stream whose chunks are the result of applying the transform functions (sequentially) to the input chunks
- *
- * @example const asInt = map(readable, parseInt)
- * @example const asUpperCase = map(readable, item => item.toUpperCase())
- * @example const asDouble = map(readable, item => item * 2)
- * @example const asLength = map(readable, item => item.length)
- * @example const asJSONobj = map(readable, JSON.stringify, JSON.parse)
+ * @param fn1 Transform from A to B
+ * @returns A readable stream of B chunks
  */
 export function map<A, B>(readable: ReadableStream<A>, fn1: ITransformer<A, B>): ReadableStream<B>
+/**
+ * Applies 2 chained transform functions to each chunk of the input stream.
+ * Types are inferred through the chain.
+ *
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @param fn2 Transform from B to C
+ * @returns A readable stream of C chunks
+ */
 export function map<A, B, C>(
   readable: ReadableStream<A>,
   fn1: ITransformer<A, B>,
   fn2: ITransformer<B, C>,
 ): ReadableStream<C>
+/**
+ * Applies 3 chained transform functions to each chunk of the input stream.
+ * Types are inferred through the chain.
+ *
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @param fn2 Transform from B to C
+ * @param fn3 Transform from C to D
+ * @returns A readable stream of D chunks
+ */
 export function map<A, B, C, D>(
   readable: ReadableStream<A>,
   fn1: ITransformer<A, B>,
   fn2: ITransformer<B, C>,
   fn3: ITransformer<C, D>,
 ): ReadableStream<D>
+/**
+ * Applies 4 chained transform functions to each chunk of the input stream.
+ * Types are inferred through the chain.
+ *
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @param fn2 Transform from B to C
+ * @param fn3 Transform from C to D
+ * @param fn4 Transform from D to E
+ * @returns A readable stream of E chunks
+ */
 export function map<A, B, C, D, E>(
   readable: ReadableStream<A>,
   fn1: ITransformer<A, B>,
@@ -40,6 +65,18 @@ export function map<A, B, C, D, E>(
   fn3: ITransformer<C, D>,
   fn4: ITransformer<D, E>,
 ): ReadableStream<E>
+/**
+ * Applies 5 chained transform functions to each chunk of the input stream.
+ * Types are inferred through the chain.
+ *
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @param fn2 Transform from B to C
+ * @param fn3 Transform from C to D
+ * @param fn4 Transform from D to E
+ * @param fn5 Transform from E to F
+ * @returns A readable stream of F chunks
+ */
 export function map<A, B, C, D, E, F>(
   readable: ReadableStream<A>,
   fn1: ITransformer<A, B>,
@@ -48,6 +85,19 @@ export function map<A, B, C, D, E, F>(
   fn4: ITransformer<D, E>,
   fn5: ITransformer<E, F>,
 ): ReadableStream<F>
+/**
+ * Applies 6 chained transform functions to each chunk of the input stream.
+ * Types are inferred through the chain.
+ *
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @param fn2 Transform from B to C
+ * @param fn3 Transform from C to D
+ * @param fn4 Transform from D to E
+ * @param fn5 Transform from E to F
+ * @param fn6 Transform from F to G
+ * @returns A readable stream of G chunks
+ */
 export function map<A, B, C, D, E, F, G>(
   readable: ReadableStream<A>,
   fn1: ITransformer<A, B>,
@@ -57,6 +107,20 @@ export function map<A, B, C, D, E, F, G>(
   fn5: ITransformer<E, F>,
   fn6: ITransformer<F, G>,
 ): ReadableStream<G>
+/**
+ * Applies 7 chained transform functions to each chunk of the input stream.
+ * Types are inferred through the chain.
+ *
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @param fn2 Transform from B to C
+ * @param fn3 Transform from C to D
+ * @param fn4 Transform from D to E
+ * @param fn5 Transform from E to F
+ * @param fn6 Transform from F to G
+ * @param fn7 Transform from G to H
+ * @returns A readable stream of H chunks
+ */
 export function map<A, B, C, D, E, F, G, H>(
   readable: ReadableStream<A>,
   fn1: ITransformer<A, B>,
@@ -67,6 +131,21 @@ export function map<A, B, C, D, E, F, G, H>(
   fn6: ITransformer<F, G>,
   fn7: ITransformer<G, H>,
 ): ReadableStream<H>
+/**
+ * Applies 8 chained transform functions to each chunk of the input stream.
+ * Types are inferred through the chain.
+ *
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @param fn2 Transform from B to C
+ * @param fn3 Transform from C to D
+ * @param fn4 Transform from D to E
+ * @param fn5 Transform from E to F
+ * @param fn6 Transform from F to G
+ * @param fn7 Transform from G to H
+ * @param fn8 Transform from H to I
+ * @returns A readable stream of I chunks
+ */
 export function map<A, B, C, D, E, F, G, H, I>(
   readable: ReadableStream<A>,
   fn1: ITransformer<A, B>,
@@ -78,6 +157,22 @@ export function map<A, B, C, D, E, F, G, H, I>(
   fn7: ITransformer<G, H>,
   fn8: ITransformer<H, I>,
 ): ReadableStream<I>
+/**
+ * Applies 9 chained transform functions to each chunk of the input stream.
+ * Types are inferred through the chain.
+ *
+ * @param readable The input stream
+ * @param fn1 Transform from A to B
+ * @param fn2 Transform from B to C
+ * @param fn3 Transform from C to D
+ * @param fn4 Transform from D to E
+ * @param fn5 Transform from E to F
+ * @param fn6 Transform from F to G
+ * @param fn7 Transform from G to H
+ * @param fn8 Transform from H to I
+ * @param fn9 Transform from I to J
+ * @returns A readable stream of J chunks
+ */
 export function map<A, B, C, D, E, F, G, H, I, J>(
   readable: ReadableStream<A>,
   fn1: ITransformer<A, B>,
