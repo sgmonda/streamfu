@@ -237,19 +237,34 @@ body::after {
     text-decoration: none;
 }
 
-.nav-logo-img {
+.nav-logo-carousel {
+    width: 24px;
     height: 24px;
-    width: auto;
+    overflow: hidden;
+    flex-shrink: 0;
 }
 
-/*.nav-logo::before {
-    content: ">";
-    color: var(--color-prompt);
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin-right: 0.1rem;
-    animation: blink-cursor 1.2s step-end infinite;
-}*/
+.nav-logo-track {
+    display: flex;
+    width: 48px;
+    animation: logo-scroll 3s linear infinite;
+}
+
+.nav-logo-img {
+    height: 24px;
+    width: 24px;
+    flex-shrink: 0;
+    display: block;
+}
+
+@keyframes logo-scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-24px);
+    }
+}
 
 @keyframes blink-cursor {
     0%,
