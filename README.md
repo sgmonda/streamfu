@@ -13,7 +13,7 @@
 
 Functional stream utilities for JavaScript & TypeScript
 
-[Getting Started](#getting-started) · [API](#api-reference) · [Why streamfu?](#why-streamfu) · [Contributing](#contributing)
+[Website](http://sgmonda.com/streamfu/) · [Getting Started](#getting-started) · [API](#api-reference) · [Why streamfu?](#why-streamfu) · [Contributing](#contributing)
 
 </div>
 
