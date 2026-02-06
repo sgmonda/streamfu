@@ -44,6 +44,8 @@ Coverage excludes `src/system/` and `examples/`. The project maintains 100% cove
 
 **Composition**: `pipe()` chains operations via functional reduce. All operations are pure functions with no mutations and support async callbacks.
 
+**Type inference via overloads**: `map()` and `pipe()` use TypeScript function overloads (up to 9 chained transforms) to provide full type inference through transformation chains. A catch-all overload with `any` handles cases beyond 9.
+
 ## Code Style
 
 Enforced by `deno fmt` configuration in `deno.json`:
@@ -71,13 +73,16 @@ Deno.test("functionName()", async ({ step }) => {
 })
 ```
 
+## Error Handling
+
+Transform operations (`map`, `filter`, etc.) wrap callbacks in try/catch and call `controller.error(e)` to propagate errors through streams rather than swallowing them.
+
 ## Key Type Conventions
 
-- `IReadable<T>` — typed alias for `ReadableStream<T>`
 - `ITuple<T>` — maps `ReadableStream[]` types to value tuple types (used by `zip`)
-- Custom errors extend `StreamFuError` (defined in `src/errors.ts`)
-- Heavy use of generics for type inference through transformation chains
+- `StreamFuError` is an abstract base class (not exported); only `UnknownPlatformError` is public (in `src/errors.ts`)
+- `map()` and `pipe()` use function overloads for type-safe chaining (see Architecture)
 
 ## Publishing
 
-CI publishes to JSR automatically on push to `main` (via `.github/workflows/publish.yml`) after tests pass. Version is in `deno.json`.
+CI runs tests on PRs via `test.yml` and publishes to JSR on push to `main` via `publish.yml` (which calls `test.yml` first). Version is in `deno.json`.
