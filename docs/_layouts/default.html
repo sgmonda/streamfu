@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
   {% include head.html %}
   <body>
     {% include nav.html %}
@@ -10,7 +10,7 @@
       </article>
       <div class="edit-link">
         <a href="https://github.com/sgmonda/streamfu/edit/main/docs/{{ page.path }}" target="_blank" rel="noopener">
-          Edit this page on GitHub
+          edit this page on GitHub
         </a>
       </div>
     </main>
@@ -19,9 +19,13 @@
 
     <script>
       ;(function () {
-        var theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+        var theme = "dark"
         var saved = localStorage.getItem("streamfu-theme")
-        if (saved) theme = saved
+        if (saved) {
+          theme = saved
+        } else if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+          theme = "light"
+        }
         document.documentElement.setAttribute("data-theme", theme)
 
         window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function (e) {

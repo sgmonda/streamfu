@@ -12,7 +12,10 @@ title: streamfu — Functional Stream Utilities
     <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License">
     <img src="https://img.shields.io/badge/coverage-100%25-brightgreen" alt="100% Coverage">
   </div>
-  <p>Functional stream utilities for JavaScript & TypeScript.<br>Built on Web Streams. Works everywhere.</p>
+  <p class="hero-description">Functional stream utilities for JavaScript & TypeScript.<br>Built on Web Streams. Works everywhere.</p>
+  <div class="hero-terminal">
+    <code><span class="prompt">$</span> deno add <span class="flag">-D</span> <span class="pkg">@sgmonda/streamfu</span></code>
+  </div>
   <div class="cta-group">
     <a href="{{ '/getting-started' | relative_url }}" class="cta cta-primary">Get Started</a>
     <a href="{{ '/api/' | relative_url }}" class="cta cta-secondary">API Reference</a>

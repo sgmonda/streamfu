@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Transformation Functions | streamfu</title>
+  <meta name="description" content="Functional stream utilities for JavaScript & TypeScript">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="/streamfu/assets/css/style.css">
+</head>
+
+  <body>
+    <header class="site-header">
+  <nav class="nav-container">
+    <a href="/streamfu/" class="nav-logo">
+      <img src="/streamfu/assets/images/logo.png" alt="streamfu" class="nav-logo-img">
+      <span>streamfu</span>
+    </a>
+
+    <button class="nav-hamburger" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="nav-links">
+      
+        
+        <a href="/streamfu/getting-started" >Getting Started</a>
+        
+      
+        
+        <div class="dropdown">
+          <a href="/streamfu/api/" class="dropdown-toggle active">
+            API
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <div class="dropdown-menu">
+            
+            <a href="/streamfu/api/" >Overview</a>
+            
+            <a href="/streamfu/api/creation" >Creation</a>
+            
+            <a href="/streamfu/api/transformations" >Transformations</a>
+            
+            <a href="/streamfu/api/consumers" >Consumers</a>
+            
+          </div>
+        </div>
+        
+      
+        
+        <a href="/streamfu/examples" >Examples</a>
+        
+      
+        
+        <a href="/streamfu/principles" >Principles</a>
+        
+      
+
+      <a href="https://github.com/sgmonda/streamfu" target="_blank" rel="noopener" class="nav-github">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+
+      <button class="theme-toggle" aria-label="Toggle theme">
+        <svg class="sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+
+    <main class="container">
+      <article class="content">
+        <h1 id="transformation-functions">Transformation Functions</h1>
+
+<p>These return a <strong>new <code class="language-plaintext highlighter-rouge">ReadableStream</code></strong> — the original is not consumed.</p>
+
+<hr />
+
+<h2 id="map">map</h2>
+
+<p>Applies one or more transform functions to each chunk. Supports chaining up to 9 transforms with full type inference.</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">map</span><span class="o">&lt;</span><span class="nx">A</span><span class="p">,</span> <span class="nx">B</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">readable</span><span class="p">:</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">A</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">fn</span><span class="p">:</span> <span class="p">(</span><span class="nx">chunk</span><span class="p">:</span> <span class="nx">A</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">B</span> <span class="o">|</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">B</span><span class="o">&gt;</span><span class="p">):</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">B</span><span class="o">&gt;</span>
+<span class="kd">function</span> <span class="nf">map</span><span class="o">&lt;</span><span class="nx">A</span><span class="p">,</span> <span class="nx">B</span><span class="p">,</span> <span class="nx">C</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">readable</span><span class="p">:</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">A</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">fn1</span><span class="p">:</span> <span class="p">(</span><span class="nx">chunk</span><span class="p">:</span> <span class="nx">A</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">B</span><span class="p">,</span> <span class="nx">fn2</span><span class="p">:</span> <span class="p">(</span><span class="nx">chunk</span><span class="p">:</span> <span class="nx">B</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">C</span><span class="p">):</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">C</span><span class="o">&gt;</span>
+<span class="c1">// ... up to 9 chained transforms</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">readable</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ReadableStream&lt;A&gt;</code></td>
+      <td>The input stream</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">...fns</code></td>
+      <td><code class="language-plaintext highlighter-rouge">((chunk: T) =&gt; U)[]</code></td>
+      <td>One or more transform functions</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Returns:</strong> <code class="language-plaintext highlighter-rouge">ReadableStream</code> of the final transform’s output type</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">createReadable</span><span class="p">,</span> <span class="nx">list</span><span class="p">,</span> <span class="nx">map</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@sgmonda/streamfu</span><span class="dl">"</span>
+
+<span class="kd">const</span> <span class="nx">stream</span> <span class="o">=</span> <span class="nf">createReadable</span><span class="p">([</span><span class="dl">"</span><span class="s2">alice</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">bob</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">charlie</span><span class="dl">"</span><span class="p">])</span>
+
+<span class="c1">// Single transform</span>
+<span class="kd">const</span> <span class="nx">upper</span> <span class="o">=</span> <span class="nf">map</span><span class="p">(</span><span class="nx">stream</span><span class="p">,</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">s</span><span class="p">.</span><span class="nf">toUpperCase</span><span class="p">())</span>
+<span class="c1">// ["ALICE", "BOB", "CHARLIE"]</span>
+
+<span class="c1">// Chained transforms — types flow through</span>
+<span class="kd">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nf">map</span><span class="p">(</span>
+  <span class="nf">createReadable</span><span class="p">([</span><span class="dl">"</span><span class="s2">1,alice</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">2,bob</span><span class="dl">"</span><span class="p">]),</span>
+  <span class="p">(</span><span class="nx">line</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">line</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="dl">"</span><span class="s2">,</span><span class="dl">"</span><span class="p">),</span>
+  <span class="p">(</span><span class="nx">cols</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">({</span> <span class="na">id</span><span class="p">:</span> <span class="nc">Number</span><span class="p">(</span><span class="nx">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="na">name</span><span class="p">:</span> <span class="nx">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">}),</span>
+<span class="p">)</span>
+<span class="c1">// [{ id: 1, name: "alice" }, { id: 2, name: "bob" }]</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="filter">filter</h2>
+
+<p>Keeps only chunks that match a predicate function. Supports async predicates.</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">filter</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">readable</span><span class="p">:</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">fn</span><span class="p">:</span> <span class="p">(</span><span class="nx">chunk</span><span class="p">:</span> <span class="nx">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">boolean</span> <span class="o">|</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">boolean</span><span class="o">&gt;</span><span class="p">):</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">readable</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ReadableStream&lt;T&gt;</code></td>
+      <td>The input stream</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">fn</code></td>
+      <td><code class="language-plaintext highlighter-rouge">(chunk: T) =&gt; boolean \| Promise&lt;boolean&gt;</code></td>
+      <td>Predicate function</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Returns:</strong> <code class="language-plaintext highlighter-rouge">ReadableStream&lt;T&gt;</code></p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">createReadable</span><span class="p">,</span> <span class="nx">filter</span><span class="p">,</span> <span class="nx">list</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@sgmonda/streamfu</span><span class="dl">"</span>
+
+<span class="kd">const</span> <span class="nx">evens</span> <span class="o">=</span> <span class="k">await</span> <span class="nf">list</span><span class="p">(</span>
+  <span class="nf">filter</span><span class="p">(</span><span class="nf">createReadable</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]),</span> <span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">0</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="c1">// [2, 4]</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="flat">flat</h2>
+
+<p>Flattens a stream of arrays.</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">flat</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">readable</span><span class="p">:</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">unknown</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">depth</span><span class="p">?:</span> <span class="kr">number</span><span class="p">):</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">readable</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ReadableStream</code></td>
+      <td>—</td>
+      <td>The stream to flatten</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">depth</code></td>
+      <td><code class="language-plaintext highlighter-rouge">number</code></td>
+      <td><code class="language-plaintext highlighter-rouge">1</code></td>
+      <td>How deep to flatten</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Returns:</strong> <code class="language-plaintext highlighter-rouge">ReadableStream&lt;T&gt;</code></p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">createReadable</span><span class="p">,</span> <span class="nx">flat</span><span class="p">,</span> <span class="nx">list</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@sgmonda/streamfu</span><span class="dl">"</span>
+
+<span class="kd">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">await</span> <span class="nf">list</span><span class="p">(</span>
+  <span class="nf">flat</span><span class="p">(</span><span class="nf">createReadable</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">]])),</span>
+<span class="p">)</span>
+<span class="c1">// [1, 2, 3, 4, 5]</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="flatmap">flatMap</h2>
+
+<p>Map + flatten in one step. Applies a function that returns an array, then flattens by one level.</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">flatMap</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">readable</span><span class="p">:</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">mapper</span><span class="p">:</span> <span class="p">(</span><span class="nx">chunk</span><span class="p">:</span> <span class="nx">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">U</span><span class="p">[]):</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">U</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">readable</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ReadableStream&lt;T&gt;</code></td>
+      <td>The input stream</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">mapper</code></td>
+      <td><code class="language-plaintext highlighter-rouge">(chunk: T) =&gt; U[]</code></td>
+      <td>Function returning an array</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Returns:</strong> <code class="language-plaintext highlighter-rouge">ReadableStream&lt;U&gt;</code></p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">createReadable</span><span class="p">,</span> <span class="nx">flatMap</span><span class="p">,</span> <span class="nx">list</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@sgmonda/streamfu</span><span class="dl">"</span>
+
+<span class="kd">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">await</span> <span class="nf">list</span><span class="p">(</span>
+  <span class="nf">flatMap</span><span class="p">(</span><span class="nf">createReadable</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">n</span><span class="p">,</span> <span class="nx">n</span> <span class="o">*</span> <span class="mi">10</span><span class="p">]),</span>
+<span class="p">)</span>
+<span class="c1">// [1, 10, 2, 20, 3, 30]</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="slice">slice</h2>
+
+<p>Extracts a portion of the stream between start and end indexes.</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">slice</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">readable</span><span class="p">:</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">start</span><span class="p">:</span> <span class="kr">number</span><span class="p">,</span> <span class="nx">end</span><span class="p">?:</span> <span class="kr">number</span><span class="p">):</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">readable</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ReadableStream&lt;T&gt;</code></td>
+      <td>—</td>
+      <td>The stream to slice</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">start</code></td>
+      <td><code class="language-plaintext highlighter-rouge">number</code></td>
+      <td>—</td>
+      <td>Start index (inclusive)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">end</code></td>
+      <td><code class="language-plaintext highlighter-rouge">number</code></td>
+      <td><code class="language-plaintext highlighter-rouge">Infinity</code></td>
+      <td>End index (exclusive)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Returns:</strong> <code class="language-plaintext highlighter-rouge">ReadableStream&lt;T&gt;</code></p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">createReadable</span><span class="p">,</span> <span class="nx">list</span><span class="p">,</span> <span class="nx">slice</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@sgmonda/streamfu</span><span class="dl">"</span>
+
+<span class="kd">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">await</span> <span class="nf">list</span><span class="p">(</span>
+  <span class="nf">slice</span><span class="p">(</span><span class="nf">createReadable</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">]),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="c1">// [20, 30, 40]</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="splice">splice</h2>
+
+<p>Remove and/or insert chunks at a position.</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">splice</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">readable</span><span class="p">:</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">start</span><span class="p">:</span> <span class="kr">number</span><span class="p">,</span> <span class="nx">replaced</span><span class="p">:</span> <span class="kr">number</span><span class="p">,</span> <span class="p">...</span><span class="nx">newItems</span><span class="p">:</span> <span class="nx">T</span><span class="p">[]):</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">readable</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ReadableStream&lt;T&gt;</code></td>
+      <td>The input stream</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">start</code></td>
+      <td><code class="language-plaintext highlighter-rouge">number</code></td>
+      <td>Index at which to start replacing</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">replaced</code></td>
+      <td><code class="language-plaintext highlighter-rouge">number</code></td>
+      <td>Number of items to remove</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">...newItems</code></td>
+      <td><code class="language-plaintext highlighter-rouge">T[]</code></td>
+      <td>Items to insert</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Returns:</strong> <code class="language-plaintext highlighter-rouge">ReadableStream&lt;T&gt;</code></p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">createReadable</span><span class="p">,</span> <span class="nx">list</span><span class="p">,</span> <span class="nx">splice</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@sgmonda/streamfu</span><span class="dl">"</span>
+
+<span class="kd">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">await</span> <span class="nf">list</span><span class="p">(</span>
+  <span class="nf">splice</span><span class="p">(</span><span class="nf">createReadable</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="c1">// [1, 2, 99, 100, 4, 5]</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="concat">concat</h2>
+
+<p>Concatenates multiple streams sequentially.</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">concat</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(...</span><span class="nx">readables</span><span class="p">:</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">[]):</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">...readables</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ReadableStream&lt;T&gt;[]</code></td>
+      <td>Streams to concatenate</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Returns:</strong> <code class="language-plaintext highlighter-rouge">ReadableStream&lt;T&gt;</code></p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">concat</span><span class="p">,</span> <span class="nx">createReadable</span><span class="p">,</span> <span class="nx">list</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@sgmonda/streamfu</span><span class="dl">"</span>
+
+<span class="kd">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">await</span> <span class="nf">list</span><span class="p">(</span>
+  <span class="nf">concat</span><span class="p">(</span><span class="nf">createReadable</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="nf">createReadable</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span> <span class="nf">createReadable</span><span class="p">([</span><span class="mi">5</span><span class="p">])),</span>
+<span class="p">)</span>
+<span class="c1">// [1, 2, 3, 4, 5]</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="zip">zip</h2>
+
+<p>Combines multiple streams into a stream of tuples. The shortest stream determines the output length.</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">zip</span><span class="o">&lt;</span><span class="nx">T</span> <span class="kd">extends</span> <span class="k">readonly</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">unknown</span><span class="o">&gt;</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">(...</span><span class="nx">readables</span><span class="p">:</span> <span class="nx">T</span><span class="p">):</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">ITuple</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;&gt;</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">...readables</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ReadableStream[]</code></td>
+      <td>Streams to combine</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Returns:</strong> <code class="language-plaintext highlighter-rouge">ReadableStream&lt;[T1, T2, ...]&gt;</code> — tuples of values from each stream</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">createReadable</span><span class="p">,</span> <span class="nx">list</span><span class="p">,</span> <span class="nx">zip</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@sgmonda/streamfu</span><span class="dl">"</span>
+
+<span class="kd">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">await</span> <span class="nf">list</span><span class="p">(</span>
+  <span class="nf">zip</span><span class="p">(</span><span class="nf">createReadable</span><span class="p">([</span><span class="dl">"</span><span class="s2">a</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">b</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">c</span><span class="dl">"</span><span class="p">]),</span> <span class="nf">createReadable</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])),</span>
+<span class="p">)</span>
+<span class="c1">// [["a", 1], ["b", 2], ["c", 3]]</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="pipe">pipe</h2>
+
+<p>Chains multiple stream operations with full type inference (up to 9 transforms).</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">pipe</span><span class="o">&lt;</span><span class="nx">A</span><span class="p">,</span> <span class="nx">B</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">readable</span><span class="p">:</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">A</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">fn1</span><span class="p">:</span> <span class="p">(</span><span class="nx">r</span><span class="p">:</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">A</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">B</span><span class="o">&gt;</span><span class="p">):</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">B</span><span class="o">&gt;</span>
+<span class="kd">function</span> <span class="nf">pipe</span><span class="o">&lt;</span><span class="nx">A</span><span class="p">,</span> <span class="nx">B</span><span class="p">,</span> <span class="nx">C</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">readable</span><span class="p">:</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">A</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">fn1</span><span class="p">:</span> <span class="p">...,</span> <span class="nx">fn2</span><span class="p">:</span> <span class="p">...):</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">C</span><span class="o">&gt;</span>
+<span class="c1">// ... up to 9 chained functions</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">readable</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ReadableStream&lt;A&gt;</code></td>
+      <td>The input stream</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">...fns</code></td>
+      <td><code class="language-plaintext highlighter-rouge">((r: ReadableStream) =&gt; ReadableStream)[]</code></td>
+      <td>Transform functions</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Returns:</strong> <code class="language-plaintext highlighter-rouge">ReadableStream</code> of the final function’s output type</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">createReadable</span><span class="p">,</span> <span class="nx">filter</span><span class="p">,</span> <span class="nx">list</span><span class="p">,</span> <span class="nx">map</span><span class="p">,</span> <span class="nx">pipe</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@sgmonda/streamfu</span><span class="dl">"</span>
+
+<span class="kd">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">await</span> <span class="nf">list</span><span class="p">(</span><span class="nf">pipe</span><span class="p">(</span>
+  <span class="nf">createReadable</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">]),</span>
+  <span class="p">(</span><span class="nx">r</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nf">filter</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">0</span><span class="p">),</span>
+  <span class="p">(</span><span class="nx">r</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nf">map</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
+  <span class="p">(</span><span class="nx">r</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nf">map</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="s2">`Value: </span><span class="p">${</span><span class="nx">n</span><span class="p">}</span><span class="s2">`</span><span class="p">),</span>
+<span class="p">))</span>
+<span class="c1">// ["Value: 4", "Value: 8", "Value: 12", "Value: 16", "Value: 20"]</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="branch">branch</h2>
+
+<p>Splits a stream into <code class="language-plaintext highlighter-rouge">n</code> independent copies. The original stream is locked after branching.</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">branch</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">readable</span><span class="p">:</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">n</span><span class="p">:</span> <span class="kr">number</span><span class="p">):</span> <span class="nx">ReadableStream</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">[]</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">readable</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ReadableStream&lt;T&gt;</code></td>
+      <td>Stream to branch</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">n</code></td>
+      <td><code class="language-plaintext highlighter-rouge">number</code></td>
+      <td>Number of copies</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Returns:</strong> <code class="language-plaintext highlighter-rouge">ReadableStream&lt;T&gt;[]</code></p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">branch</span><span class="p">,</span> <span class="nx">createReadable</span><span class="p">,</span> <span class="nx">list</span><span class="p">,</span> <span class="nx">reduce</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@sgmonda/streamfu</span><span class="dl">"</span>
+
+<span class="kd">const</span> <span class="p">[</span><span class="nx">forSum</span><span class="p">,</span> <span class="nx">forList</span><span class="p">]</span> <span class="o">=</span> <span class="nf">branch</span><span class="p">(</span><span class="nf">createReadable</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">sum</span> <span class="o">=</span> <span class="k">await</span> <span class="nf">reduce</span><span class="p">(</span><span class="nx">forSum</span><span class="p">,</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1">// 6</span>
+<span class="kd">const</span> <span class="nx">items</span> <span class="o">=</span> <span class="k">await</span> <span class="nf">list</span><span class="p">(</span><span class="nx">forList</span><span class="p">)</span> <span class="c1">// [1, 2, 3]</span>
+</code></pre></div></div>
+
+      </article>
+      <div class="edit-link">
+        <a href="https://github.com/sgmonda/streamfu/edit/main/docs/api/transformations.md" target="_blank" rel="noopener">
+          edit this page on GitHub
+        </a>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-links">
+      <a href="https://jsr.io/@sgmonda/streamfu" target="_blank" rel="noopener">jsr</a>
+      <span class="footer-sep">/</span>
+      <a href="https://github.com/sgmonda/streamfu" target="_blank" rel="noopener">github</a>
+      <span class="footer-sep">/</span>
+      <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener">mit</a>
+    </div>
+    <p class="footer-copy">built by <a href="https://github.com/sgmonda">@sgmonda</a></p>
+  </div>
+</footer>
+
+
+    <script>
+      ;(function () {
+        var theme = "dark"
+        var saved = localStorage.getItem("streamfu-theme")
+        if (saved) {
+          theme = saved
+        } else if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+          theme = "light"
+        }
+        document.documentElement.setAttribute("data-theme", theme)
+
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function (e) {
+          if (!localStorage.getItem("streamfu-theme")) {
+            document.documentElement.setAttribute("data-theme", e.matches ? "dark" : "light")
+          }
+        })
+      })()
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var toggle = document.querySelector(".theme-toggle")
+        if (toggle) {
+          toggle.addEventListener("click", function () {
+            var current = document.documentElement.getAttribute("data-theme")
+            var next = current === "dark" ? "light" : "dark"
+            document.documentElement.setAttribute("data-theme", next)
+            localStorage.setItem("streamfu-theme", next)
+          })
+        }
+
+        var hamburger = document.querySelector(".nav-hamburger")
+        var navLinks = document.querySelector(".nav-links")
+        if (hamburger && navLinks) {
+          hamburger.addEventListener("click", function () {
+            navLinks.classList.toggle("open")
+            hamburger.classList.toggle("open")
+          })
+        }
+
+        var dropdownToggle = document.querySelector(".dropdown-toggle")
+        var dropdown = document.querySelector(".dropdown")
+        if (dropdownToggle && dropdown) {
+          dropdownToggle.addEventListener("click", function (e) {
+            if (window.innerWidth <= 768) {
+              e.preventDefault()
+              dropdown.classList.toggle("open")
+            }
+          })
+        }
+      })
+    </script>
+  </body>
+</html>
