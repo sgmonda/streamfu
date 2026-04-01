@@ -11,7 +11,7 @@ export * from "./src/forEach.ts"
 export * from "./src/flatMap.ts"
 export * from "./src/includes.ts"
 export * from "./src/indexOf.ts"
-// export * from "./src/join.ts" // TODO Implement
+export * from "./src/join.ts"
 // export * from "./src/keys.ts" // TODO Implement
 // export * from "./src/lastIndexOf.ts" // TODO Implement
 // export * from "./src/pop.ts" // TODO Implement

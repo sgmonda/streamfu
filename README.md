@@ -188,6 +188,7 @@ These **consume the stream** — it cannot be reused afterward.
 | `includes(stream, value)`  | Check if a value exists in the stream |
 | `at(stream, index)`        | Get the chunk at a specific index     |
 | `indexOf(stream, value)`   | Find the index of a value             |
+| `join(stream, separator?)` | Join all chunks into a string         |
 
 ### Consuming vs non-consuming
 

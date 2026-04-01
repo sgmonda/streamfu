@@ -204,3 +204,30 @@ import { createReadable, indexOf } from "@sgmonda/streamfu"
 const idx = await indexOf(createReadable(["a", "b", "c", "d"]), "c")
 // 2
 ```
+
+---
+
+## join
+
+Joins all elements of a stream into a string, separated by the specified separator. Defaults to `","`.
+
+```typescript
+function join<T>(readable: ReadableStream<T>, separator?: string): Promise<string>
+```
+
+| Parameter   | Type                | Description                          |
+| ----------- | ------------------- | ------------------------------------ |
+| `readable`  | `ReadableStream<T>` | The stream to join                   |
+| `separator` | `string`            | Separator between elements (default: `","`) |
+
+**Returns:** `Promise<string>`
+
+```typescript
+import { createReadable, join } from "@sgmonda/streamfu"
+
+const csv = await join(createReadable([1, 2, 3]), ",")
+// "1,2,3"
+
+const sentence = await join(createReadable(["hello", "world"]), " ")
+// "hello world"
+```

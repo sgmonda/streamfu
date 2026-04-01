@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.0] - 2026-04-01
+
+### Added
+
+- `join()` consumer function — joins all stream elements into a string with a configurable separator, like `Array.prototype.join`
+
 ## [0.6.0] - 2026-04-01
 
 ### Fixed

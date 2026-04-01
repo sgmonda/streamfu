@@ -5,7 +5,7 @@ title: API Reference
 
 # API Reference
 
-streamfu provides **22 functions** organized in three categories.
+streamfu provides **23 functions** organized in three categories.
 
 > **Rule of thumb:** If it returns a `ReadableStream`, it's non-consuming. If it returns a `Promise`, it consumes the stream.
 
@@ -53,3 +53,4 @@ These **consume the stream** and return a `Promise` — it cannot be reused afte
 | [`forEach(stream, fn)`]({{ '/api/consumers'      | relative_url }}#foreach)  |
 | [`includes(stream, value)`]({{ '/api/consumers'  | relative_url }}#includes) |
 | [`indexOf(stream, value)`]({{ '/api/consumers'   | relative_url }}#indexof)  |
+| [`join(stream, separator?)`]({{ '/api/consumers' | relative_url }}#join)    |
