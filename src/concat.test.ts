@@ -1,4 +1,4 @@
-import { assertEquals } from "asserts/equals"
+import { assertEquals, assertRejects } from "asserts"
 import { concat } from "./concat.ts"
 import { list } from "./list.ts"
 import { createReadable } from "./createReadable.ts"
@@ -24,6 +24,23 @@ const TEST_CASES = [{
   iterators: [[1, 2], [], [3, 4]],
   expected: [1, 2, 3, 4],
 }]
+
+Deno.test("concat() error propagation", async ({ step }) => {
+  await step("error in source stream propagates to consumer", async () => {
+    const failing = new ReadableStream<number>({
+      start(controller) {
+        controller.enqueue(1)
+        controller.error(new Error("source error"))
+      },
+    })
+    const readable = concat(failing, createReadable([3, 4]))
+    await assertRejects(
+      () => list(readable),
+      Error,
+      "source error",
+    )
+  })
+})
 
 Deno.test("concat()", async ({ step }) => {
   for (const testCase of TEST_CASES) await runTest(testCase)

@@ -10,5 +10,8 @@ import { reduce } from "./reduce.ts"
  * @example const arr = list(readable1)
  */
 export const list = <T>(readable: ReadableStream<T>): Promise<T[]> => {
-  return reduce(readable, (accum: T[], chunk: T) => [...accum, chunk], [])
+  return reduce(readable, (accum: T[], chunk: T) => {
+    accum.push(chunk)
+    return accum
+  }, [])
 }

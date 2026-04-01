@@ -1,4 +1,4 @@
-import { assertEquals } from "asserts/equals"
+import { assertEquals, assertThrows } from "asserts"
 import { range } from "./range.ts"
 import { list } from "../list.ts"
 
@@ -26,6 +26,10 @@ const TEST_CASES = [{
 
 Deno.test("range()", async ({ step }) => {
   for (const testCase of TEST_CASES) await runTest(testCase)
+
+  await step("step=0 throws RangeError", () => {
+    assertThrows(() => range(0, 10, 0), RangeError, "step must not be 0")
+  })
 
   async function runTest({ title, conditions, expected }: typeof TEST_CASES[0]) {
     await step(title, async () => {

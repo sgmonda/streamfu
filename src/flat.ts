@@ -1,3 +1,5 @@
+import { TransformStream } from "./system/stream.ts"
+
 /**
  * Flattens a stream of arrays.
  *

@@ -1,5 +1,5 @@
 import { zip } from "./zip.ts"
-import { assertEquals } from "asserts/equals"
+import { assertEquals, assertRejects } from "asserts"
 import { list } from "./list.ts"
 import { createReadable } from "./createReadable.ts"
 
@@ -36,6 +36,23 @@ const TEST_CASES = [{
   ],
   expected: [],
 }]
+
+Deno.test("zip() error propagation", async ({ step }) => {
+  await step("error in one source stream propagates to consumer", async () => {
+    const failing = new ReadableStream<number>({
+      start(controller) {
+        controller.enqueue(1)
+        controller.error(new Error("zip source error"))
+      },
+    })
+    const zipped = zip(failing, createReadable(["a", "b", "c"]))
+    await assertRejects(
+      () => list(zipped),
+      Error,
+      "zip source error",
+    )
+  })
+})
 
 Deno.test("zip()", async ({ step }) => {
   for (const { title, streams, expected } of TEST_CASES) {

@@ -1,3 +1,5 @@
+import { TransformStream } from "./system/stream.ts"
+
 /**
  * Creates a new ReadableStream that contains only the elements between the start and end indexes of the original stream.
  *

@@ -1,3 +1,5 @@
+import { TransformStream } from "./system/stream.ts"
+
 /**
  * Replace items from a ReadableStream, starting at a given index.
  *

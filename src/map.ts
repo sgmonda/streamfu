@@ -208,6 +208,5 @@ export function map(readable: ReadableStream<any>, ...transformers: ITransformer
       }
     },
   })
-  readable.pipeTo(ts.writable).catch(() => {})
-  return ts.readable
+  return readable.pipeThrough(ts)
 }

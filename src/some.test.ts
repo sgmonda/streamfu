@@ -1,4 +1,4 @@
-import { assertEquals } from "asserts/equals"
+import { assertEquals, assertRejects } from "asserts"
 import { createReadable } from "./createReadable.ts"
 import { some } from "./some.ts"
 
@@ -53,7 +53,22 @@ const TEST_CASES = [{
   expected: false,
 }]
 
-Deno.test("every()", async ({ step }) => {
+Deno.test("some() error propagation", async ({ step }) => {
+  await step("error in predicate rejects the promise", async () => {
+    const readable = createReadable([1, 2, 3])
+    await assertRejects(
+      () =>
+        some(readable, (chunk) => {
+          if (chunk === 2) throw new Error("predicate error")
+          return false
+        }),
+      Error,
+      "predicate error",
+    )
+  })
+})
+
+Deno.test("some()", async ({ step }) => {
   for (const testCase of TEST_CASES) await runTest(testCase)
 
   async function runTest({ title, conditions, expected }: typeof TEST_CASES[0]) {

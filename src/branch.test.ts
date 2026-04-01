@@ -1,4 +1,4 @@
-import { assertEquals } from "asserts/equals"
+import { assertEquals, assertThrows } from "asserts"
 import { createReadable } from "./createReadable.ts"
 import { branch } from "./branch.ts"
 import { reduce } from "./reduce.ts"
@@ -47,6 +47,19 @@ Deno.test("branch()", async ({ step }) => {
       assertEquals(await reduce(branches[4], mulReducer, 1), mul)
     })
   }
+})
+
+Deno.test("branch() error handling", async ({ step }) => {
+  await step("n < 1 throws RangeError", () => {
+    const stream = createReadable([1, 2, 3])
+    assertThrows(() => branch(stream, 0), RangeError, "n must be >= 1")
+  })
+
+  await step("locked stream throws TypeError", () => {
+    const stream = createReadable([1, 2, 3])
+    stream.getReader() // locks the stream
+    assertThrows(() => branch(stream, 2), TypeError)
+  })
 })
 
 const sumReducer = (acc: number, v: number) => acc + v

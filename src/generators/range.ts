@@ -12,6 +12,7 @@ import { createReadable } from "../createReadable.ts"
  * @example const readable = range(0, 4, 2)
  */
 export const range = (min: number, max: number, step: number = 1): ReadableStream<number> => {
+  if (step === 0) throw new RangeError("step must not be 0")
   return createReadable(rangeGen(min, max, step))
 }
 

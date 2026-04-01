@@ -1,4 +1,4 @@
-import { assertEquals } from "asserts/equals"
+import { assertEquals, assertRejects } from "asserts"
 import { createReadable } from "./createReadable.ts"
 import { filter } from "./filter.ts"
 import { flatMap } from "./flatMap.ts"
@@ -53,6 +53,25 @@ Deno.test("pipe() type inference", async ({ step }) => {
       (r) => map(r, (chunk) => `(${chunk})`),
     )
     assertEquals(await list(result), ["(2)", "(2)", "(3)", "(3)"])
+  })
+})
+
+Deno.test("pipe() error propagation", async ({ step }) => {
+  await step("error in a piped transform rejects the consuming promise", async () => {
+    const stream = pipe(
+      createReadable([1, 2, 3]),
+      (r) =>
+        map(r, (chunk) => {
+          if (chunk === 2) throw new Error("pipe error")
+          return chunk
+        }),
+      (r) => filter(r, (chunk) => chunk > 0),
+    )
+    await assertRejects(
+      () => list(stream),
+      Error,
+      "pipe error",
+    )
   })
 })
 

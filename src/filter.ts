@@ -1,3 +1,5 @@
+import { TransformStream } from "./system/stream.ts"
+
 /**
  * Filter stream chunks based on a predicate function.
  *
@@ -21,6 +23,5 @@ export const filter = <T>(
       }
     },
   })
-  readable.pipeTo(ts.writable).catch(() => {})
-  return ts.readable
+  return readable.pipeThrough(ts)
 }
