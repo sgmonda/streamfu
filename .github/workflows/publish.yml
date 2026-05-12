@@ -17,7 +17,18 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
+      - name: Check if version is published on JSR
+        id: check
+        run: |
+          VERSION=$(jq -r .version deno.json)
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://jsr.io/@sgmonda/streamfu/${VERSION}_meta.json")
+          if [ "$STATUS" = "200" ]; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Publish package
+        if: steps.check.outputs.published == 'false'
         run: npx jsr publish
   npm:
     needs: test
@@ -27,16 +38,29 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
+      - name: Check if version is published on npm
+        id: check
+        run: |
+          VERSION=$(jq -r .version deno.json)
+          if npm view "@sgmonda/streamfu@$VERSION" version >/dev/null 2>&1; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
       - uses: denoland/setup-deno@v2
+        if: steps.check.outputs.published == 'false'
         with:
           deno-version: v2.x
       - uses: actions/setup-node@v4
+        if: steps.check.outputs.published == 'false'
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
       - name: Build npm package
+        if: steps.check.outputs.published == 'false'
         run: deno run -A scripts/build_npm.ts
       - name: Publish to npm
+        if: steps.check.outputs.published == 'false'
         run: cd npm && npm publish --access public --provenance
   release:
     needs: publish
@@ -46,20 +70,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
-      - name: Check version change
+          fetch-depth: 0
+      - name: Check if tag exists
         id: version
         run: |
           CURRENT=$(jq -r .version deno.json)
-          PREVIOUS=$(git show HEAD~1:deno.json | jq -r .version)
+          TAG="v$CURRENT"
           echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
-          if [ "$CURRENT" != "$PREVIOUS" ]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
           else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
       - name: Create tag and release
-        if: steps.version.outputs.changed == 'true'
+        if: steps.version.outputs.exists == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
