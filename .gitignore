@@ -3,3 +3,6 @@
 node_modules
 .claude
 npm/
+examples/**/package-lock.json
+examples/**/pnpm-lock.yaml
+examples/**/yarn.lock
