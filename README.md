@@ -8,6 +8,7 @@
 
 [![JSR Score](https://jsr.io/badges/@sgmonda/streamfu/score)](https://jsr.io/@sgmonda/streamfu)
 [![JSR Version](https://jsr.io/badges/@sgmonda/streamfu)](https://jsr.io/@sgmonda/streamfu)
+[![npm version](https://img.shields.io/npm/v/@sgmonda/streamfu?logo=npm)](https://www.npmjs.com/package/@sgmonda/streamfu)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![100% Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)]()
 
@@ -105,23 +106,36 @@ const [a, b, c, d] = branch(stream, 4)
 ### Install
 
 <details open>
-  <summary><strong>npm / yarn / pnpm / bun</strong></summary>
+  <summary><strong>Node.js / Bun</strong> — from npm</summary>
 
 ```bash
-npx jsr add @sgmonda/streamfu     # npm
-yarn dlx jsr add @sgmonda/streamfu # yarn
-pnpm dlx jsr add @sgmonda/streamfu # pnpm
-bunx jsr add @sgmonda/streamfu     # bun
+npm install @sgmonda/streamfu
+yarn add @sgmonda/streamfu
+pnpm add @sgmonda/streamfu
+bun add @sgmonda/streamfu
+```
+
+Ships a **dual CJS + ESM** build with classic `main` / `types` fields, so it works in any project — including legacy setups with `"module": "commonjs"` and `"moduleResolution": "node10"`. No `tsconfig.json` changes required.
+
+</details>
+
+<details>
+  <summary><strong>Deno</strong> — from JSR</summary>
+
+```bash
+deno add jsr:@sgmonda/streamfu
 ```
 
 </details>
 
 <details>
-  <summary><strong>Deno</strong></summary>
+  <summary><strong>Node.js / Bun</strong> — from JSR (modern TS only)</summary>
 
 ```bash
-deno add jsr:@sgmonda/streamfu
+npx jsr add @sgmonda/streamfu
 ```
+
+Requires `"moduleResolution": "node16"`, `"nodenext"`, or `"bundler"` in your `tsconfig.json`. If you're on `"node10"`, install from npm instead (see above).
 
 </details>
 

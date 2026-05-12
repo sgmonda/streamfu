@@ -32,14 +32,12 @@ jobs:
           deno-version: v2.x
       - uses: actions/setup-node@v4
         with:
-          node-version: "20.x"
+          node-version: "24"
           registry-url: "https://registry.npmjs.org"
       - name: Build npm package
         run: deno run -A scripts/build_npm.ts
       - name: Publish to npm
-        run: cd npm && npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: cd npm && npm publish --access public --provenance
   release:
     needs: publish
     runs-on: ubuntu-latest

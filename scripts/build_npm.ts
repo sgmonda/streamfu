@@ -9,7 +9,6 @@ await build({
   outDir: "./npm",
   shims: {},
   test: false,
-  scriptModule: false,
   typeCheck: false,
   package: {
     name: "@sgmonda/streamfu",

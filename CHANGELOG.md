@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.1] - 2026-05-12
+
+### Changed
+
+- npm package now ships a **dual CJS + ESM** build with classic `main`/`types` fields. Resolves consumption in Node.js projects using `"module": "commonjs"` and `"moduleResolution": "node10"` without requiring any `tsconfig.json` changes.
+- npm publishing migrated to **Trusted Publishing (OIDC)** with provenance attestations. No long-lived `NPM_TOKEN` required.
+
 ## [0.7.0] - 2026-04-01
 
 ### Added
