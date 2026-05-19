@@ -12,7 +12,8 @@
     "jsr:@std/path@^1.1.4": "1.1.4",
     "jsr:@ts-morph/bootstrap@0.27": "0.27.0",
     "jsr:@ts-morph/common@0.27": "0.27.0",
-    "npm:@types/node@*": "22.5.4"
+    "npm:@types/node@*": "22.5.4",
+    "npm:fast-check@3": "3.23.2"
   },
   "jsr": {
     "@david/code-block-writer@13.0.3": {
@@ -77,6 +78,15 @@
         "undici-types"
       ]
     },
+    "fast-check@3.23.2": {
+      "integrity": "sha512-h5+1OzzfCC3Ef7VbtKdcv7zsstUQwUDlYpUTvjeUsJAssPgLn7QzbboPtL5ro04Mq0rPOsMzl7q5hIbRs2wD1A==",
+      "dependencies": [
+        "pure-rand"
+      ]
+    },
+    "pure-rand@6.1.0": {
+      "integrity": "sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA=="
+    },
     "undici-types@6.19.8": {
       "integrity": "sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw=="
     }
@@ -133,7 +143,8 @@
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@*",
-      "jsr:@std/streams@*"
+      "jsr:@std/streams@*",
+      "npm:fast-check@3"
     ]
   }
 }

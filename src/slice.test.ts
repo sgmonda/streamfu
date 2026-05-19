@@ -91,6 +91,30 @@ const TEST_CASES = [{
     end: undefined,
   },
   expected: [2, 3],
+}, {
+  title: "end equals start (empty window) at start of stream",
+  conditions: {
+    data: [1, 2, 3],
+    start: 0,
+    end: 0,
+  },
+  expected: [],
+}, {
+  title: "end equals start (empty window) in the middle of stream",
+  conditions: {
+    data: [1, 2, 3],
+    start: 2,
+    end: 2,
+  },
+  expected: [],
+}, {
+  title: "negative-effective window (end < start)",
+  conditions: {
+    data: [1, 2, 3, 4, 5],
+    start: 3,
+    end: 1,
+  },
+  expected: [],
 }]
 
 Deno.test("slice()", async ({ step }) => {

@@ -56,6 +56,33 @@ Deno.test("pipe() type inference", async ({ step }) => {
   })
 })
 
+Deno.test("pipe() with TransformStream", async ({ step }) => {
+  await step("accepts a TransformStream as a step", async () => {
+    const upper = new TransformStream<string, string>({
+      transform(chunk, controller) {
+        controller.enqueue(chunk.toUpperCase())
+      },
+    })
+    const stream = pipe(createReadable(["a", "b", "c"]), upper)
+    assertEquals(await list(stream), ["A", "B", "C"])
+  })
+
+  await step("interleaves TransformStream and function steps in any order", async () => {
+    const upper = new TransformStream<string, string>({
+      transform(chunk, controller) {
+        controller.enqueue(chunk.toUpperCase())
+      },
+    })
+    const stream = pipe(
+      createReadable(["a", "b", "c", "d"]),
+      upper,
+      (r) => filter(r, (chunk) => chunk !== "B"),
+      (r) => map(r, (chunk) => `[${chunk}]`),
+    )
+    assertEquals(await list(stream), ["[A]", "[C]", "[D]"])
+  })
+})
+
 Deno.test("pipe() error propagation", async ({ step }) => {
   await step("error in a piped transform rejects the consuming promise", async () => {
     const stream = pipe(

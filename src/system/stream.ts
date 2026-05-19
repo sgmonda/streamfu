@@ -26,13 +26,11 @@ if (platform === PLATFORM.DENO) {
   WritableStream = globalThis.WritableStream
   TransformStream = globalThis.TransformStream
 } else if (platform === PLATFORM.NODE) {
-  // @ts-ignore JSR does not recognize 'require' when publishing
-  const streamsModule = require("node:stream/web")
-
-  //@ts-ignore Cross Runtime
-  ReadableStream = streamsModule.ReadableStream
-  //@ts-ignore Cross Runtime
-  WritableStream = streamsModule.WritableStream
-  //@ts-ignore Cross Runtime
-  TransformStream = streamsModule.TransformStream
+  // Node 18+ exposes Web Streams on globalThis. We use those instead of
+  // `require("node:stream/web")` so the same module works in both CJS and
+  // ESM builds emitted by dnt (the literal `require` would fail in ESM).
+  // Older Node versions are not supported.
+  ReadableStream = globalThis.ReadableStream
+  WritableStream = globalThis.WritableStream
+  TransformStream = globalThis.TransformStream
 }

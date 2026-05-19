@@ -1,8 +1,10 @@
 import { describe, test } from "node:test"
 import assert from "node:assert"
 import fs from "node:fs"
-import * as streamfu from "../../mod"
+import os from "node:os"
 import path from "node:path"
+import { Readable } from "node:stream"
+import * as streamfu from "../../mod"
 
 describe("createReadable()", () => {
   test("is a function", () => {
@@ -124,5 +126,43 @@ describe("mixed", () => {
     assert.strictEqual(part[1].name, "Belarus ")
     assert.strictEqual(part[1].population, 10293011)
     assert(/\w{5}/.test(part[1].id))
+  })
+})
+
+describe("Node Readable bridge (Readable.toWeb + lines + pipe)", () => {
+  test("processes a large NDJSON file without buffering the whole thing", async () => {
+    // Write a 50k-line NDJSON file to a temp path.
+    const rows = 50_000
+    const tmpPath = path.join(os.tmpdir(), `streamfu-ndjson-${process.pid}.ndjson`)
+    const ws = fs.createWriteStream(tmpPath)
+    for (let i = 0; i < rows; i++) ws.write(`{"id":${i},"active":${(i % 7) === 0}}\n`)
+    await new Promise<void>((resolve, reject) =>
+      ws.end((err: Error | null | undefined) => err ? reject(err) : resolve())
+    )
+
+    try {
+      const fileStream = Readable.toWeb(fs.createReadStream(tmpPath)) as ReadableStream<Uint8Array>
+
+      let activeCount = 0
+      let totalCount = 0
+      const pipeline = streamfu.pipe(
+        fileStream,
+        streamfu.lines,
+        (r) => streamfu.map(r, (line) => JSON.parse(line) as { id: number; active: boolean }),
+        (r) =>
+          streamfu.tap(r, () => {
+            totalCount++
+          }),
+        (r) => streamfu.filter(r, (row) => row.active),
+      )
+      await streamfu.forEach(pipeline, () => {
+        activeCount++
+      })
+
+      assert.strictEqual(totalCount, rows)
+      assert.strictEqual(activeCount, Math.ceil(rows / 7))
+    } finally {
+      fs.unlinkSync(tmpPath)
+    }
   })
 })

@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.8.0] - 2026-05-19
+
+### Added
+
+- **`tap(stream, fn)`** — run a side-effect per chunk (with `(chunk, i)`) and forward chunks unchanged. Async effects are awaited before the next chunk; thrown errors propagate.
+- **`count(stream)`** — consumer that resolves to the number of chunks.
+- **`take(stream, n)`** / **`drop(stream, n)`** — array-style aliases for `slice(s, 0, n)` and `slice(s, n)`.
+- **`batch(stream, size)`** — group consecutive chunks into arrays of `size` (last batch may be smaller). Validates `size` is a positive integer.
+- **`merge(...streams)`** — interleave multiple streams by chunk arrival time, unlike `concat` (sequential) and `zip` (positional).
+- **`lines(stream)`** / **`csvLines(stream)`** — split text or byte streams into lines. `csvLines` preserves `\n` inside double-quoted fields per RFC 4180.
+- **`toBuffer(stream)`** — consumer that concatenates `Uint8Array | string` chunks into a single `Uint8Array` (UTF-8 for strings). In Node, the result is usable as a `Buffer` directly.
+- **`iterate(producer)`** — generator that calls `producer(i)` until it returns `null`. Useful for paginated APIs and dynamic stop conditions.
+- **Per-module subpath exports** (`@sgmonda/streamfu/map`, `/filter`, ...) for both JSR and npm. Helps `moduleResolution: node10` consumers import only what they use.
+- **README**: documents new operators, adds a "Working with Node streams" section covering `Readable.toWeb()`, the `safeQueryRunner` pattern, and an end-to-end CSV example.
+- Property-based equivalence tests against `Array.prototype` for `map`, `filter`, `reduce`, `concat`, `take`, `drop`, `count` via `fast-check`.
+- Node integration test that streams a 50k-line NDJSON file through `Readable.toWeb` + `lines` + `map` + `tap` + `filter`.
+
+### Changed
+
+- **`filter(stream, fn)`** now passes the chunk index as the second argument: `(chunk, i) => boolean`. Backwards compatible — predicates that ignore the second argument keep working.
+- **`pipe(stream, ...steps)`** now accepts `TransformStream` instances as steps, mixed freely with functions. Lets you drop one-liner wrappers like `(r) => r.pipeThrough(t)`.
+- **`slice(stream, start, end)`** rewritten to use absolute indices. Fixes a latent edge case where `slice(s, 0, 0)` returned the first chunk instead of an empty stream; also covers `end === start` mid-stream and `end < start`.
+
+### Removed
+
+- **Node 16 support.** `system/stream.ts` now reads `globalThis.{ReadableStream,WritableStream,TransformStream}` instead of `require("node:stream/web")`. Node 18+ is the minimum (Node 16 has been EOL since September 2023). The change unblocks importing streamfu from a Node ESM consumer; the previous build embedded a literal `require` that the ESM emit could not load.
+
 ## [0.7.2] - 2026-05-19
 
 ### Fixed
