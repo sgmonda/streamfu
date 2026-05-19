@@ -4,7 +4,9 @@
  * @template Tin The input stream chunk type
  * @template Tout The output stream chunk type
  */
-type IPipeFn<Tin, Tout> = (readable: ReadableStream<Tin>) => ReadableStream<Tout>
+type IPipeFn<Tin, Tout> =
+  | ((readable: ReadableStream<Tin>) => ReadableStream<Tout>)
+  | TransformStream<Tin, Tout>
 
 /**
  * Passes a readable stream through 1 transform function.
@@ -187,5 +189,13 @@ export function pipe<A, B, C, D, E, F, G, H, I, J>(
 export function pipe(readable: ReadableStream<any>, ...fns: IPipeFn<any, any>[]): ReadableStream<any>
 // deno-lint-ignore no-explicit-any
 export function pipe(readable: ReadableStream<any>, ...fns: IPipeFn<any, any>[]): ReadableStream<any> {
-  return fns.reduce((prev, fn) => fn(prev), readable)
+  return fns.reduce(
+    // deno-lint-ignore no-explicit-any
+    (prev, step) => (isTransformStream(step) ? prev.pipeThrough(step) : step(prev)) as ReadableStream<any>,
+    readable,
+  )
 }
+
+// deno-lint-ignore no-explicit-any
+const isTransformStream = (step: unknown): step is TransformStream<any, any> =>
+  typeof step === "object" && step !== null && "readable" in step && "writable" in step
