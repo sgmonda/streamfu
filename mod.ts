@@ -1,6 +1,7 @@
 export * from "./src/generators/range.ts"
 export * from "./src/generators/words.ts"
 export * from "./src/at.ts"
+export * from "./src/batch.ts"
 export * from "./src/concat.ts"
 export * from "./src/count.ts"
 export * from "./src/drop.ts"
