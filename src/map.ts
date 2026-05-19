@@ -189,13 +189,14 @@ export function map<A, B, C, D, E, F, G, H, I, J>(
 export function map(readable: ReadableStream<any>, ...transformers: ITransformer<any, any>[]): ReadableStream<any>
 // deno-lint-ignore no-explicit-any
 export function map(readable: ReadableStream<any>, ...transformers: ITransformer<any, any>[]): ReadableStream<any> {
-  let i = 0
+  let chunkIndex = 0
   // deno-lint-ignore no-explicit-any
   const applyTransformers = async (chunk: any): Promise<any> => {
     let value: unknown = chunk
     for (const fn of transformers) {
-      value = await fn(value, i++)
+      value = await fn(value, chunkIndex)
     }
+    chunkIndex++
     return value
   }
   const ts = new TransformStream({
