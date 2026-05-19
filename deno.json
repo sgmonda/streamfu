@@ -40,7 +40,8 @@
   },
   "imports": {
     "streams": "jsr:@std/streams",
-    "asserts": "jsr:@std/assert"
+    "asserts": "jsr:@std/assert",
+    "fast-check": "npm:fast-check@3"
   },
   "tasks": {
     "check": "deno check src/**/*.ts *.ts",
