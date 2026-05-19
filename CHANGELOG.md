@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.2] - 2026-05-19
+
+### Fixed
+
+- **map()**: chained transformers now receive the same chunk index for the same chunk. Previously the index was incremented per transformer invocation, so `map(s, fn1, fn2, fn3)` over 5 chunks made `fn1` see indices `[0, 3, 6, 9, 12]` instead of `[0, 1, 2, 3, 4]`.
+- **splice()**: insert-only calls (`replaced === 0`) and calls with `start` beyond the stream length now correctly insert the new items, matching `Array.prototype.splice`. Previously the items were silently dropped.
+- **concat()**: respects consumer backpressure. Earlier the first `pull()` drained every source stream eagerly, so combining `concat` with `slice()`, `take()`, or any early-terminating operator wastefully read sources the consumer never asked for. Later sources are now opened only when the previous one is drained, and not at all if the consumer stops first.
+
 ## [0.7.1] - 2026-05-12
 
 ### Changed
