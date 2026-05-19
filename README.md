@@ -170,6 +170,7 @@ console.log(sumOfDoubledEvens) // 60
 | `createWritable(fn)`       | Create a writable stream from a callback function                     |
 | `range(min, max, step?)`   | Generate a stream of numbers in a range                               |
 | `words(chars, length)`     | Generate a stream of random strings                                   |
+| `iterate(fn)`              | Generate a stream by calling `fn(i)` until it returns `null`          |
 
 ### Transformations (non-consuming)
 
@@ -179,30 +180,39 @@ These return a **new stream** — the original is not consumed.
 | ---------------------------------------- | ------------------------------------------------------------ |
 | `map(stream, ...fns)`                    | Transform each chunk (supports chaining multiple transforms) |
 | `filter(stream, fn)`                     | Keep only chunks matching a predicate                        |
+| `tap(stream, fn)`                        | Run a side-effect on each chunk, forward chunks untouched    |
 | `flat(stream, depth?)`                   | Flatten a stream of arrays                                   |
 | `flatMap(stream, fn)`                    | Map + flatten in one step                                    |
+| `batch(stream, size)`                    | Group consecutive chunks into arrays of `size`               |
 | `slice(stream, start, end?)`             | Extract a portion of the stream                              |
+| `take(stream, n)`                        | Keep the first `n` chunks (alias of `slice(s, 0, n)`)        |
+| `drop(stream, n)`                        | Skip the first `n` chunks (alias of `slice(s, n)`)           |
 | `splice(stream, start, count, ...items)` | Remove/insert chunks at a position                           |
 | `concat(...streams)`                     | Concatenate multiple streams sequentially                    |
+| `merge(...streams)`                      | Interleave multiple streams as chunks arrive                 |
 | `zip(...streams)`                        | Combine streams into a stream of tuples                      |
-| `pipe(stream, ...fns)`                   | Chain multiple stream operations                             |
+| `lines(stream)`                          | Split a text or byte stream into lines (UTF-8)               |
+| `csvLines(stream)`                       | Like `lines()`, but preserves `\n` inside quoted CSV fields  |
+| `pipe(stream, ...fns)`                   | Chain functions or `TransformStream`s                        |
 | `branch(stream, n)`                      | Split a stream into `n` independent copies                   |
 
 ### Consumers (consuming)
 
 These **consume the stream** — it cannot be reused afterward.
 
-| Function                   | Description                           |
-| -------------------------- | ------------------------------------- |
-| `reduce(stream, fn, init)` | Reduce to a single value              |
-| `list(stream)`             | Collect all chunks into an array      |
-| `some(stream, fn)`         | Check if any chunk matches            |
-| `every(stream, fn)`        | Check if all chunks match             |
-| `forEach(stream, fn)`      | Execute a function for each chunk     |
-| `includes(stream, value)`  | Check if a value exists in the stream |
-| `at(stream, index)`        | Get the chunk at a specific index     |
-| `indexOf(stream, value)`   | Find the index of a value             |
-| `join(stream, separator?)` | Join all chunks into a string         |
+| Function                   | Description                                        |
+| -------------------------- | -------------------------------------------------- |
+| `reduce(stream, fn, init)` | Reduce to a single value                           |
+| `list(stream)`             | Collect all chunks into an array                   |
+| `count(stream)`            | Count the number of chunks                         |
+| `some(stream, fn)`         | Check if any chunk matches                         |
+| `every(stream, fn)`        | Check if all chunks match                          |
+| `forEach(stream, fn)`      | Execute a function for each chunk                  |
+| `includes(stream, value)`  | Check if a value exists in the stream              |
+| `at(stream, index)`        | Get the chunk at a specific index                  |
+| `indexOf(stream, value)`   | Find the index of a value                          |
+| `join(stream, separator?)` | Join all chunks into a string                      |
+| `toBuffer(stream)`         | Concatenate binary/text chunks into a `Uint8Array` |
 
 ### Consuming vs non-consuming
 
@@ -733,6 +743,66 @@ try {
 ```
 
 No special error listeners, no extra plumbing. Errors flow naturally through `map()`, `filter()`, and any other chained transformation, all the way to whichever consumer ends the pipeline.
+
+---
+
+## Working with Node.js streams
+
+streamfu operates on **Web Streams** (`ReadableStream`, `WritableStream`, `TransformStream`). On the Node side, most APIs hand you a **Node `Readable`** instead — `fs.createReadStream`, `multer`'s file upload, TypeORM's `queryRunner.stream()`, HTTP request bodies, and so on.
+
+Bridge with the standard `Readable.toWeb()` helper (Node 17+, stable since 18.7):
+
+```typescript
+import { Readable } from "node:stream"
+import { filter, list, map, pipe } from "@sgmonda/streamfu"
+
+const nodeReadable = fs.createReadStream("./users.csv")
+const webStream = Readable.toWeb(nodeReadable) as ReadableStream<Uint8Array>
+```
+
+From there it's plain streamfu. End-to-end CSV ingest example:
+
+```typescript
+import { Readable } from "node:stream"
+import fs from "node:fs"
+import { csvLines, filter, forEach, lines, map, pipe } from "@sgmonda/streamfu"
+
+const file = Readable.toWeb(fs.createReadStream("./users.csv")) as ReadableStream<Uint8Array>
+
+await forEach(
+  pipe(
+    file,
+    csvLines, // ReadableStream<string>
+    (r) => map(r, (line) => line.split(",")), // ReadableStream<string[]>
+    (r) => filter(r, (cols) => cols[1] === "active"),
+  ),
+  (cols) => insertUser(cols),
+)
+```
+
+Tips:
+
+- The cast `as ReadableStream<T>` after `Readable.toWeb()` is unavoidable today — Node's types return a wider `ReadableStream<any>`. It's safe as long as the source you're wrapping really produces `T` chunks.
+- **TypeORM `queryRunner.stream()`** returns a Node Readable backed by a database connection. Make sure to release the QueryRunner after the stream ends or errors — failing to do so exhausts the pool. A small wrapper pattern:
+
+  ```typescript
+  const safeQueryRunner = async <T>(em: EntityManager, sql: string): Promise<ReadableStream<T>> => {
+    const qr = em.connection.createQueryRunner()
+    try {
+      const nodeStream = await qr.stream(sql)
+      const release = async () => {
+        if (!qr.isReleased) await qr.release()
+      }
+      nodeStream.on("end", release).on("error", release).on("close", release)
+      return Readable.toWeb(nodeStream) as ReadableStream<T>
+    } catch (e) {
+      if (!qr.isReleased) await qr.release()
+      throw e
+    }
+  }
+  ```
+
+- **`toBuffer()`** returns a `Uint8Array`. In Node, `Buffer extends Uint8Array`, so the result is already usable wherever a `Buffer` is expected; call `Buffer.from(bytes)` if you want the explicit type.
 
 ## Contributing
 
