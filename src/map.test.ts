@@ -44,7 +44,7 @@ const TEST_CASES = [{
   conditions: {
     iterable: ["1", "2", "3"],
     transforms: [
-      parseInt,
+      (num: string) => parseInt(num, 10),
       (item: number) => item * 2.1299,
       (item: number) => item.toFixed(3),
     ],
@@ -106,6 +106,43 @@ Deno.test("map() type inference", async ({ step }) => {
       (num) => num > 3,
     )
     assertEquals(await list(result), [false, true, true])
+  })
+})
+
+Deno.test("map() chunk index", async ({ step }) => {
+  await step("single transformer receives chunk index 0..N-1", async () => {
+    const seen: number[] = []
+    const stream = map(createReadable(["a", "b", "c", "d"]), (chunk, i) => {
+      seen.push(i)
+      return `${chunk}${i}`
+    })
+    assertEquals(await list(stream), ["a0", "b1", "c2", "d3"])
+    assertEquals(seen, [0, 1, 2, 3])
+  })
+
+  await step("chained transformers all receive the same index for the same chunk", async () => {
+    const seenFn1: number[] = []
+    const seenFn2: number[] = []
+    const seenFn3: number[] = []
+    const stream = map(
+      createReadable([10, 20, 30, 40, 50]),
+      (chunk, i) => {
+        seenFn1.push(i)
+        return chunk
+      },
+      (chunk, i) => {
+        seenFn2.push(i)
+        return chunk
+      },
+      (chunk, i) => {
+        seenFn3.push(i)
+        return chunk
+      },
+    )
+    assertEquals(await list(stream), [10, 20, 30, 40, 50])
+    assertEquals(seenFn1, [0, 1, 2, 3, 4])
+    assertEquals(seenFn2, [0, 1, 2, 3, 4])
+    assertEquals(seenFn3, [0, 1, 2, 3, 4])
   })
 })
 

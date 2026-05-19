@@ -22,14 +22,14 @@ const TEST_CASES = [{
   },
   expected: [],
 }, {
-  title: "single item stream, inserting without removing (do nothing)",
+  title: "single item stream, inserting without removing",
   conditions: {
     data: [33],
     index: 0,
     replaced: 0,
     inserted: [44],
   },
-  expected: [33],
+  expected: [44, 33],
 }, {
   title: "multiple items stream, removing",
   conditions: {
@@ -40,12 +40,39 @@ const TEST_CASES = [{
   },
   expected: [11, 22, 44, 55],
 }, {
-  title: "multiple items stream, inserting without removing (do nothing)",
+  title: "multiple items stream, inserting without removing",
   conditions: {
     data: [11, 22, 33, 44, 55],
     index: 2,
     replaced: 0,
     inserted: [66, 77],
+  },
+  expected: [11, 22, 66, 77, 33, 44, 55],
+}, {
+  title: "start beyond stream length, inserting (insert at end)",
+  conditions: {
+    data: [11, 22, 33],
+    index: 99,
+    replaced: 1,
+    inserted: [44, 55],
+  },
+  expected: [11, 22, 33, 44, 55],
+}, {
+  title: "start beyond stream length, no items to remove (insert at end)",
+  conditions: {
+    data: [11, 22, 33],
+    index: 99,
+    replaced: 0,
+    inserted: [44],
+  },
+  expected: [11, 22, 33, 44],
+}, {
+  title: "insert at end of stream (start equals length)",
+  conditions: {
+    data: [11, 22, 33],
+    index: 3,
+    replaced: 0,
+    inserted: [44, 55],
   },
   expected: [11, 22, 33, 44, 55],
 }, {
