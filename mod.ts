@@ -1,3 +1,4 @@
+export * from "./src/generators/iterate.ts"
 export * from "./src/generators/range.ts"
 export * from "./src/generators/words.ts"
 export * from "./src/at.ts"
