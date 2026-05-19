@@ -25,6 +25,7 @@ export * from "./src/slice.ts"
 // export * from "./src/with.ts" // TODO Implement
 export * from "./src/list.ts"
 export * from "./src/map.ts"
+export * from "./src/merge.ts"
 export * from "./src/reduce.ts"
 export * from "./src/some.ts"
 export * from "./src/take.ts"
