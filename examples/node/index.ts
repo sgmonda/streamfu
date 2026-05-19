@@ -136,7 +136,9 @@ describe("Node Readable bridge (Readable.toWeb + lines + pipe)", () => {
     const tmpPath = path.join(os.tmpdir(), `streamfu-ndjson-${process.pid}.ndjson`)
     const ws = fs.createWriteStream(tmpPath)
     for (let i = 0; i < rows; i++) ws.write(`{"id":${i},"active":${(i % 7) === 0}}\n`)
-    await new Promise<void>((resolve, reject) => ws.end((err: Error | null | undefined) => err ? reject(err) : resolve()))
+    await new Promise<void>((resolve, reject) =>
+      ws.end((err: Error | null | undefined) => err ? reject(err) : resolve())
+    )
 
     try {
       const fileStream = Readable.toWeb(fs.createReadStream(tmpPath)) as ReadableStream<Uint8Array>
@@ -147,10 +149,15 @@ describe("Node Readable bridge (Readable.toWeb + lines + pipe)", () => {
         fileStream,
         streamfu.lines,
         (r) => streamfu.map(r, (line) => JSON.parse(line) as { id: number; active: boolean }),
-        (r) => streamfu.tap(r, () => { totalCount++ }),
+        (r) =>
+          streamfu.tap(r, () => {
+            totalCount++
+          }),
         (r) => streamfu.filter(r, (row) => row.active),
       )
-      await streamfu.forEach(pipeline, () => { activeCount++ })
+      await streamfu.forEach(pipeline, () => {
+        activeCount++
+      })
 
       assert.strictEqual(totalCount, rows)
       assert.strictEqual(activeCount, Math.ceil(rows / 7))
